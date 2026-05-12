@@ -1,0 +1,72 @@
+.container {
+  max-width: 600px; // Lo limitamos para que parezca un feed de móvil en PC
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+
+  h1 {
+    font-size: 28px;
+    font-weight: bold;
+    color: #1e293b;
+    margin: 0;
+  }
+}
+
+.btnPrimary {
+  background-color: #0f172a;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #334155;
+  }
+}
+
+.filters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 32px;
+  overflow-x: auto; // Por si hay muchas etiquetas que se pueda hacer scroll
+  padding-bottom: 8px;
+}
+
+.filterTag {
+  background-color: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #e2e8f0;
+  }
+}
+
+.feed {
+  display: flex;
+  flex-direction: column;
+  gap: 40px; // Bastante espacio entre publicaciones
+}
+
+.postPlaceholder {
+  height: 400px;
+  background-color: #f8fafc;
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+}

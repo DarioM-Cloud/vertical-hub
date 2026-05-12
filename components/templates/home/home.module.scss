@@ -1,0 +1,99 @@
+.home {
+  background-color: #f8fafc;
+}
+
+.container {
+  width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.hero {
+  padding: 100px 0;
+  text-align: center;
+  background-color: #ffffff;
+
+  h1 {
+    font-size: 56px;
+    font-weight: 900;
+    color: #0f172a;
+    margin-bottom: 20px;
+    span { color: #3b82f6; }
+  }
+
+  p {
+    font-size: 20px;
+    color: #64748b;
+    max-width: 600px;
+    margin: 0 auto 40px auto;
+  }
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+
+  button {
+    padding: 15px 30px;
+    font-size: 16px;
+    font-weight: 700;
+    border-radius: 10px;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.1s;
+
+    &:active { transform: scale(0.98); }
+  }
+}
+
+.mainBtn { background-color: #3b82f6; color: white; }
+.secBtn { background-color: #f1f5f9; color: #0f172a; }
+
+.radarSection {
+  padding: 80px 0;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 40px;
+
+  h2 { font-size: 32px; margin: 0; }
+  span { color: #10b981; font-weight: 700; font-size: 14px; text-transform: uppercase; }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 30px;
+}
+
+.activity {
+  padding: 80px 0;
+  h2 { margin-bottom: 30px; }
+}
+
+.activityGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.activityCard {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  font-size: 15px;
+  color: #475569;
+  
+  strong { color: #0f172a; }
+}
+
+.loading {
+  text-align: center;
+  padding: 60px;
+  color: #94a3b8;
+}

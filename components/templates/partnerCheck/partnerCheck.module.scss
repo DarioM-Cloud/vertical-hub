@@ -1,0 +1,64 @@
+.container {
+  max-width: 900px; // Un poco más ancho que el feed
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 24px;
+}
+
+.titleWrapper {
+  h1 {
+    font-size: 32px;
+    margin: 0 0 8px 0;
+    color: #0f172a;
+  }
+  
+  p {
+    margin: 0;
+    color: #64748b;
+    font-size: 16px;
+  }
+}
+
+.btnAction {
+  background-color: #10b981; // Verde destacado para la acción
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.1s;
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.ticketPlaceholder {
+  height: 180px;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-left: 6px solid #94a3b8; // Detalle visual de ticket
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+  color: #64748b;
+}
