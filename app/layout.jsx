@@ -1,19 +1,19 @@
 import Navbar from '@/components/_layout/navbar';
+import Footer from '@/components/_layout/footer';
+import { AuthProvider } from '@/context/AuthContext';
 import './globals.scss';
-
-export const metadata = {
-  title: 'Vertical Hub',
-  description: 'Comunidad de escalada indoor',
-};
 
 export default function RootLayout({ children }) {
   return (
     <html lang="es">
       <body>
-        <Navbar />
-        <main className="main-content">
-          {children}
-        </main>
+        <AuthProvider>
+          <Navbar />
+          <main className="main-content">
+            {children}
+          </main>
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );

@@ -1,0 +1,68 @@
+.stepContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.menuItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-radius: 12px;
+  color: #1e293b;
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  width: 100%;
+  text-align: left;
+
+  &:hover {
+    background-color: #f8fafc;
+
+    .chevron {
+      color: #3b82f6;
+      transform: translateX(4px);
+    }
+  }
+}
+
+.menuItemLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 15px;
+  font-weight: 600;
+
+  svg {
+    color: #475569;
+  }
+}
+
+.chevron {
+  color: #cbd5e1;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.divider {
+  height: 1px;
+  background-color: #e2e8f0;
+  margin: 16px 0;
+}
+
+.logoutDrawerBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px;
+  color: #ef4444 !important;
+  font-weight: 700;
+  
+  &:hover {
+    background-color: #fef2f2 !important;
+  }
+}
