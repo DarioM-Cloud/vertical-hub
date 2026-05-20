@@ -1,0 +1,96 @@
+.ticket {
+  display: flex;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+}
+
+.dateColumn {
+  background: #3b82f6;
+  color: #ffffff;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 80px;
+}
+
+.day {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.time {
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.body {
+  padding: 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.topRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.user {
+  font-weight: 700;
+  color: #0f172a;
+  font-size: 16px;
+}
+
+.level {
+  background: #f1f5f9;
+  color: #475569;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.message {
+  color: #64748b;
+  font-size: 14px;
+  margin: 0 0 16px 0;
+  font-style: italic;
+  flex: 1;
+}
+
+.bottomRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.place {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #0f172a;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.joinBtn {
+  background: #10b981;
+  color: #ffffff;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  
+  &:hover {
+    background: #059669;
+  }
+}

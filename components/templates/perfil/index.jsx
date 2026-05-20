@@ -1,40 +1,40 @@
+import Container from '@/components/_base/layout/container';
+import Section from '@/components/_base/layout/section';
+import Heading from '@/components/_base/ui/heading';
+import Text from '@/components/_base/ui/text';
+import StatBadge from '@/components/_base/dataDisplay/statBadge';
+import PostCard from '@/components/_base/cards/postCard';
 import styles from './perfil.module.scss';
 
-export default function Perfil() {
+export default function PerfilTemplate({ perfil, posts = [] }) {
   return (
-    <div className={styles.container}>
-      <header className={styles.profileHeader}>
-        <div className={styles.avatar}></div>
+    <Container className={styles.container}>
+      <Section className={styles.profileHeader}>
+        <div className={styles.avatar}>
+          {perfil?.nombre?.charAt(0) || 'U'}
+        </div>
         <div className={styles.userInfo}>
-          <h1>Nombre del Escalador</h1>
-          <p className={styles.bio}>Bloquero empedernido. Buscando siempre el próximo proyecto.</p>
+          <Heading level={1}>{perfil?.nombre || 'Usuario'}</Heading>
+          <Text>{perfil?.bio || 'Sin biografía'}</Text>
         </div>
-      </header>
+      </Section>
 
-      <section className={styles.stats}>
-        <div className={styles.statBox}>
-          <span className={styles.statNumber}>7A</span>
-          <span className={styles.statLabel}>Grado Máx.</span>
+      <Section className={styles.stats}>
+        <div className={styles.statsGrid}>
+          <StatBadge label="Grado Máx." value={perfil?.gradoMax || '-'} highlight />
+          <StatBadge label="Encadenes" value={posts.length} />
+          <StatBadge label="Rocódromos" value={perfil?.rocodromosVisitados || 0} />
         </div>
-        <div className={styles.statBox}>
-          <span className={styles.statNumber}>42</span>
-          <span className={styles.statLabel}>Encadenes</span>
-        </div>
-        <div className={styles.statBox}>
-          <span className={styles.statNumber}>4</span>
-          <span className={styles.statLabel}>Rocódromos</span>
-        </div>
-      </section>
+      </Section>
 
-      <main className={styles.logbook}>
-        <h2>Mi Logbook</h2>
-        <div className={styles.gridVideos}>
-          {/* Huecos para los posts/vídeos subidos por este usuario */}
-          <div className={styles.videoPlaceholder}>Vídeo Post</div>
-          <div className={styles.videoPlaceholder}>Vídeo Post</div>
-          <div className={styles.videoPlaceholder}>Vídeo Post</div>
+      <Section>
+        <Heading level={2}>Mi Logbook</Heading>
+        <div className={styles.logbookGrid}>
+          {posts.map((post) => (
+            <PostCard key={post.id} {...post} />
+          ))}
         </div>
-      </main>
-    </div>
+      </Section>
+    </Container>
   );
 }

@@ -1,7 +1,7 @@
 import GymCard from '@/components/_base/cards/gymCard';
 import styles from './home.module.scss';
 
-export default function Home({ rocodromos, loading }) {
+export default function Home({ rocodromos = [], loading }) {
   return (
     <div className={styles.home}>
       <section className={styles.hero}>
@@ -24,12 +24,14 @@ export default function Home({ rocodromos, loading }) {
 
           {loading ? (
             <div className={styles.loading}>Sincronizando con los centros...</div>
-          ) : (
+          ) : rocodromos.length > 0 ? (
             <div className={styles.grid}>
               {rocodromos.map((roco) => (
                 <GymCard key={roco.id} {...roco} />
               ))}
             </div>
+          ) : (
+            <div className={styles.empty}>No hay centros disponibles en este momento.</div>
           )}
         </div>
       </section>

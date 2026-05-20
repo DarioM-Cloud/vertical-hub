@@ -1,6 +1,4 @@
-.container {
-  max-width: 1000px;
-  margin: 0 auto;
+.wrapper {
   padding-bottom: 60px;
 }
 
@@ -11,64 +9,33 @@
 }
 
 .content {
-  padding: 0 24px;
-  margin-top: -40px; // Para que la tarjeta solape un poco la imagen
+  margin-top: -60px;
 }
 
 .headerInfo {
   background-color: #ffffff;
-  padding: 24px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   margin-bottom: 40px;
-  position: relative;
-
-  h1 {
-    font-size: 32px;
-    margin: 0 0 8px 0;
-  }
 }
 
 .location {
-  color: #64748b;
-  font-size: 16px;
-  margin: 0 0 16px 0;
+  margin-bottom: 16px;
 }
 
 .aforoBadge {
   display: inline-block;
   background-color: #10b981;
   color: #ffffff;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-weight: bold;
-  font-size: 14px;
-}
-
-.sectoresSection {
-  h2 {
-    font-size: 24px;
-    margin-bottom: 20px;
-  }
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 15px;
 }
 
 .sectoresGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 16px;
-}
-
-.sectorCard {
-  background-color: #f8fafc;
-  border: 1px solid #e2e8f0;
-  padding: 20px;
-  border-radius: 8px;
-  text-align: center;
-  font-weight: bold;
-  color: #334155;
-  cursor: pointer;
-
-  &:hover {
-    border-color: #94a3b8;
-  }
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
 }

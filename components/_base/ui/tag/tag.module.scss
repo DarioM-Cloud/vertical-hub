@@ -1,0 +1,16 @@
+.tag {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+
+  &.active {
+    background: #0f172a;
+    color: white;
+    border-color: #0f172a;
+  }
+}

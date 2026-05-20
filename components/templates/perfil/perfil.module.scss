@@ -1,91 +1,45 @@
 .container {
   max-width: 800px;
-  margin: 0 auto;
-  padding: 40px 24px;
 }
 
 .profileHeader {
   display: flex;
   align-items: center;
   gap: 24px;
-  margin-bottom: 32px;
 }
 
 .avatar {
   width: 100px;
   height: 100px;
-  background-color: #cbd5e1;
+  background-color: #0f172a;
+  color: #ffffff;
   border-radius: 50%;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: 800;
 }
 
 .userInfo {
-  h1 {
-    font-size: 28px;
-    margin: 0 0 8px 0;
-    color: #0f172a;
-  }
-  
-  .bio {
-    font-size: 16px;
-    color: #475569;
-    margin: 0;
-  }
-}
-
-.stats {
-  display: flex;
-  gap: 16px;
-  margin-bottom: 40px;
-}
-
-.statBox {
-  flex: 1;
-  background-color: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 16px;
-  text-align: center;
   display: flex;
   flex-direction: column;
 }
 
-.statNumber {
-  font-size: 24px;
-  font-weight: bold;
-  color: #3b82f6; // Azul destacado para los números
-  margin-bottom: 4px;
-}
-
-.statLabel {
-  font-size: 14px;
-  color: #64748b;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.logbook {
-  h2 {
-    font-size: 24px;
-    margin-bottom: 24px;
-    border-bottom: 2px solid #e2e8f0;
-    padding-bottom: 12px;
-  }
-}
-
-.gridVideos {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+.statsGrid {
+  display: flex;
   gap: 16px;
 }
 
-.videoPlaceholder {
-  aspect-ratio: 9 / 16; // Formato vertical tipo Reel/TikTok
-  background-color: #e2e8f0;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #94a3b8;
-  font-size: 14px;
+.logbookGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 768px) {
+  .logbookGrid {
+    grid-template-columns: 1fr;
+  }
 }

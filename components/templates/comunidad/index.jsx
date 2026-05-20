@@ -1,29 +1,48 @@
+import Container from '@/components/_base/layout/container';
+import Section from '@/components/_base/layout/section';
+import Heading from '@/components/_base/ui/heading';
+import Text from '@/components/_base/ui/text';
+import Button from '@/components/_base/ui/button';
+import Tag from '@/components/_base/ui/tag';
+import Loader from '@/components/_base/ui/loader';
+import PostCard from '@/components/_base/cards/postCard';
 import styles from './comunidad.module.scss';
 
-export default function Comunidad() {
+export default function ComunidadTemplate({ posts = [], loading }) {
   return (
-    <div className={styles.container}>
-      <header className={styles.header}>
-        <h1>Últimos Encadenes</h1>
-        <button className={styles.btnPrimary}>+ Subir Beta</button>
-      </header>
-
-      {/* Aquí irán los filtros por Rocódromo o Sector en el futuro */}
-      <section className={styles.filters}>
-        <button className={styles.filterTag}>Todos</button>
-        <button className={styles.filterTag}>Bloque</button>
-        <button className={styles.filterTag}>Vía</button>
-      </section>
-
-      <main className={styles.feed}>
-        {/* Aquí iteraremos sobre los posts. Por ahora ponemos "huecos" */}
-        <div className={styles.postPlaceholder}>
-          <p>Hueco para el Componente PostCard (Video/Foto)</p>
+    <Container>
+      <Section className={styles.headerSection}>
+        <div>
+          <Heading level={1}>Últimos Encadenes</Heading>
+          <Text variant="muted">Descubre las betas de la comunidad local.</Text>
         </div>
-        <div className={styles.postPlaceholder}>
-          <p>Hueco para el Componente PostCard (Video/Foto)</p>
+        <Button variant="primary">+ Subir Beta</Button>
+      </Section>
+
+      <Section className={styles.filtersSection}>
+        <div className={styles.filtersWrapper}>
+          <Tag active>Todos</Tag>
+          <Tag>Bloque</Tag>
+          <Tag>Vía</Tag>
+          <Tag>Mi Rocódromo</Tag>
         </div>
-      </main>
-    </div>
+      </Section>
+
+      <Section className={styles.feedSection}>
+        {loading ? (
+          <Loader text="Cargando encadenes..." />
+        ) : posts.length > 0 ? (
+          <div className={styles.grid}>
+            {posts.map(post => (
+              <PostCard key={post.id} {...post} />
+            ))}
+          </div>
+        ) : (
+          <Text variant="muted" className={styles.empty}>
+            Aún no hay publicaciones. ¡Anímate a ser el primero!
+          </Text>
+        )}
+      </Section>
+    </Container>
   );
 }
