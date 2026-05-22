@@ -1,7 +1,22 @@
-'use client'
+'use client';
 
-import Perfil from "@/components/templates/perfil";
+import { useAuth } from '@/context/AuthContext';
+import { useUserProfile } from '@/hooks/useUserProfile';
+import PerfilTemplate from '@/components/templates/perfil';
+import Loader from '@/components/_base/ui/loader';
 
-export default function PefilPage() {
-    return <Perfil />;
+export default function PerfilPage() {
+  const { user } = useAuth();
+  const { profile, logbook, loading } = useUserProfile(user?.uid);
+
+  if (loading) return <Loader />;
+
+  return (
+    <PerfilTemplate 
+      profile={profile} 
+      logbook={logbook} 
+      currentUserId={user?.uid || null} 
+      currentUserRole={user?.rol || 'user'} 
+    />
+  );
 }
