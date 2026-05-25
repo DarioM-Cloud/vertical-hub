@@ -1,17 +1,15 @@
 'use client';
 
-import Home from '@/components/templates/home';
-
 import { useRocodromos } from '@/hooks/useRocodromos';
+import { usePartnerCheck } from '@/hooks/usePartnerCheck';
+import HomeTemplate from '@/components/templates/home';
+import Loader from '@/components/_base/ui/loader';
 
 export default function HomePage() {
+  const { rocodromos, loading: loadingRocos } = useRocodromos();
+  const { tickets, loading: loadingTickets } = usePartnerCheck();
 
-  const { data, loading } = useRocodromos();
+  if (loadingRocos || loadingTickets) return <Loader />;
 
-  return (
-    <Home 
-      rocodromos={data} 
-      loading={loading} 
-    />
-  );
+  return <HomeTemplate rocodromos={rocodromos || []} tickets={tickets || []} />;
 }

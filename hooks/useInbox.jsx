@@ -1,49 +1,72 @@
 import { useState, useEffect } from 'react';
 import { db } from '@/lib/firebase';
-import { collection, query, where, orderBy, onSnapshot, doc, getDoc } from 'firebase/firestore';
+import { collection, onSnapshot, query, or, where, and, getDocs, limit, doc, getDoc } from 'firebase/firestore';
 
-export function useInbox(currentUserUid) {
+export function useInbox(uid) {
   const [chats, setChats] = useState([]);
+  const [randomUsers, setRandomUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!currentUserUid) return;
+    if (!uid) {
+      setLoading(false);
+      return;
+    }
 
     const q = query(
-      collection(db, 'chats'),
-      where('participantes', 'array-contains', currentUserUid),
-      orderBy('fechaActualizacion', 'desc')
+      collection(db, 'amistades'),
+      and(
+        or(
+          where('remitenteId', '==', uid),
+          where('receptorId', '==', uid)
+        ),
+        where('estado', '==', 'aceptados')
+      )
     );
 
     const unsubscribe = onSnapshot(q, async (snapshot) => {
-      const chatPromises = snapshot.docs.map(async (chatDoc) => {
-        const data = chatDoc.data();
-        const interlocutorUid = data.participantes.find(id => id !== currentUserUid);
-        
-        let nombreInterlocutor = 'Usuario';
-        if (interlocutorUid) {
-          const userRef = doc(db, 'usuarios', interlocutorUid);
+      try {
+        const chatsList = [];
+        for (const docSnap of snapshot.docs) {
+          const data = docSnap.data();
+          const friendId = data.remitenteId === uid ? data.receptorId : data.remitenteId;
+          const userRef = doc(db, 'usuarios', friendId);
           const userSnap = await getDoc(userRef);
+          
           if (userSnap.exists()) {
-            nombreInterlocutor = userSnap.data().nombre || userSnap.data().displayName || 'Usuario';
+            chatsList.push({
+              chatId: data.id,
+              friendId: friendId,
+              ...userSnap.data()
+            });
           }
         }
-
-        return {
-          id: chatDoc.id,
-          ...data,
-          nombreInterlocutor,
-          interlocutorUid
-        };
-      });
-
-      const resolvedChats = await Promise.all(chatPromises);
-      setChats(resolvedChats);
-      setLoading(false);
+        setChats(chatsList);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
     });
 
-    return () => unsubscribe();
-  }, [currentUserUid]);
+    const fetchRandom = async () => {
+      try {
+        const usersSnap = await getDocs(query(collection(db, 'usuarios'), limit(20)));
+        const allUsers = usersSnap.docs
+          .map(d => ({ id: d.id, ...d.data() }))
+          .filter(u => u.id !== uid);
+        
+        const shuffled = allUsers.sort(() => 0.5 - Math.random());
+        setRandomUsers(shuffled.slice(0, 5));
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
-  return { chats, loading };
+    fetchRandom();
+
+    return () => unsubscribe();
+  }, [uid]);
+
+  return { chats, randomUsers, loading };
 }

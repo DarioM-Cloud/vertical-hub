@@ -7,7 +7,7 @@ import Loader from '@/components/_base/ui/loader';
 
 export default function PerfilPage() {
   const { user } = useAuth();
-  const { profile, logbook, loading } = useUserProfile(user?.uid);
+  const { profile, logbook, loading, updateProfile } = useUserProfile(user?.uid);
 
   if (loading) return <Loader />;
 
@@ -17,6 +17,7 @@ export default function PerfilPage() {
       logbook={logbook} 
       currentUserId={user?.uid || null} 
       currentUserRole={user?.rol || 'user'} 
+      onUpdateProfile={updateProfile}
     />
   );
 }

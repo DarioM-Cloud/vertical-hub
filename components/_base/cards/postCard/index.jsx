@@ -1,31 +1,62 @@
+'use client';
+
+import { Heart, MessageCircle, Share2 } from 'lucide-react';
 import styles from './postCard.module.scss';
 
-export default function PostCard({ usuario, avatar, rocodromo, sector, grado, likes }) {
+export default function PostCard({ data }) {
+  const formattedDate = data.fecha?.toDate 
+    ? new Intl.DateTimeFormat('es-ES', { 
+        day: 'numeric', 
+        month: 'short', 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      }).format(data.fecha.toDate()) 
+    : 'Hace un momento';
+
   return (
-    <article className={styles.card}>
-      <header className={styles.header}>
-        <div className={styles.userMeta}>
-          <div className={styles.avatar}>{avatar}</div>
-          <div className={styles.info}>
-            <span className={styles.name}>{usuario}</span>
-            <span className={styles.location}>{rocodromo} • {sector}</span>
-          </div>
+    <div className={styles.card}>
+      <div className={styles.header}>
+        <div className={styles.avatarWrapper}>
+          {data.userAvatar ? (
+            <img src={data.userAvatar} alt={data.userName} className={styles.avatar} />
+          ) : (
+            <div className={styles.avatarPlaceholder}>
+              {data.userName?.charAt(0).toUpperCase() || 'U'}
+            </div>
+          )}
         </div>
-        <div className={styles.gradeBadge}>{grado}</div>
-      </header>
-
-      <div className={styles.mediaContainer}>
-        <div className={styles.placeholderMedia}></div>
+        <div className={styles.userInfo}>
+          <span className={styles.userName}>{data.userName}</span>
+          <span className={styles.date}>{formattedDate}</span>
+        </div>
       </div>
-
-      <footer className={styles.footer}>
+      
+      <div className={styles.content}>
+        {data.texto && <p className={styles.text}>{data.texto}</p>}
+        {data.mediaUrl && (
+          <div className={styles.mediaContainer}>
+            {data.mediaType === 'video' ? (
+              <video src={data.mediaUrl} controls className={styles.media} />
+            ) : (
+              <img src={data.mediaUrl} alt="Publicación" className={styles.media} loading="lazy" />
+            )}
+          </div>
+        )}
+      </div>
+      
+      <div className={styles.footer}>
         <button className={styles.actionBtn}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-          </svg>
-          <span>{likes}</span>
+          <Heart size={18} />
+          <span>{data.likes || 0}</span>
         </button>
-      </footer>
-    </article>
+        <button className={styles.actionBtn}>
+          <MessageCircle size={18} />
+          <span>{data.comentarios || 0}</span>
+        </button>
+        <button className={styles.actionBtn}>
+          <Share2 size={18} />
+        </button>
+      </div>
+    </div>
   );
 }

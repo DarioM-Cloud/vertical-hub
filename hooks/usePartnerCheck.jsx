@@ -1,36 +1,59 @@
 import { useState, useEffect } from 'react';
-import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { collection, onSnapshot, query, orderBy, addDoc, doc, deleteDoc, updateDoc, arrayUnion, arrayRemove, serverTimestamp } from 'firebase/firestore';
 
-export function usePartnerCheck(rocodromoId = null) {
-  const [solicitudes, setSolicitudes] = useState([]);
+export function usePartnerCheck() {
+  const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let q;
+    const q = query(collection(db, 'partnerTickets'), orderBy('fecha', 'desc'));
     
-    if (rocodromoId) {
-      q = query(
-        collection(db, 'partner_check'),
-        where('rocodromoId', '==', rocodromoId),
-        orderBy('fecha', 'desc')
-      );
-    } else {
-      q = query(
-        collection(db, 'partner_check'),
-        orderBy('fecha', 'desc')
-      );
-    }
-
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const docs = [];
-      snapshot.forEach((doc) => docs.push({ id: doc.id, ...doc.data() }));
-      setSolicitudes(docs);
+      const now = Date.now();
+      const tenHoursInMs = 10 * 60 * 60 * 1000;
+
+      const data = snapshot.docs
+        .map(doc => ({ id: doc.id, ...doc.data() }))
+        .filter(ticket => {
+          if (!ticket.fecha) return true; // Mantiene las peticiones que se están subiendo en este instante
+          const ticketTime = ticket.fecha.toDate().getTime();
+          return (now - ticketTime) <= tenHoursInMs; // Filtra las peticiones de más de 10 horas
+        });
+
+      setTickets(data);
       setLoading(false);
     });
 
     return () => unsubscribe();
-  }, [rocodromoId]);
+  }, []);
 
-  return { solicitudes, loading };
+  const addTicket = async (user, rocodromoId, rocodromoNombre, mensaje) => {
+    if (!user || !rocodromoId || !mensaje.trim()) return;
+    await addDoc(collection(db, 'partnerTickets'), {
+      autorId: user.uid,
+      autorNombre: user.displayName || user.nombre || 'Atleta',
+      autorFoto: user.photoURL || user.fotoPerfil || '',
+      rocodromoId,
+      rocodromoNombre,
+      mensaje,
+      interesados: [],
+      fecha: serverTimestamp()
+    });
+  };
+
+  const deleteTicket = async (ticketId) => {
+    if (!ticketId) return;
+    await deleteDoc(doc(db, 'partnerTickets', ticketId));
+  };
+
+  const toggleJoin = async (ticketId, userId, isJoined) => {
+    if (!ticketId || !userId) return;
+    const ref = doc(db, 'partnerTickets', ticketId);
+    await updateDoc(ref, {
+      interesados: isJoined ? arrayRemove(userId) : arrayUnion(userId)
+    });
+  };
+
+  return { tickets, loading, addTicket, deleteTicket, toggleJoin };
 }

@@ -1,0 +1,133 @@
+.sectionBlock {
+  margin-bottom: 40px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e2e8f0;
+
+  h2 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0px;
+  }
+}
+
+.warningIcon {
+  color: #3b82f6;
+}
+
+.avisosList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.avisoCard {
+  display: flex;
+  gap: 16px;
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid transparent;
+  background: #ffffff;
+}
+
+.avisoIconWrapper {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.avisoContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  p {
+    margin: 0px;
+    font-size: 15px;
+    line-height: 1.5;
+    color: #334155;
+  }
+}
+
+.avisoTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.avisoBadge {
+  font-size: 12px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+
+.avisoDate {
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.aviso_info {
+  border-color: #bfdbfe;
+  background: #eff6ff;
+
+  .avisoIconWrapper {
+    background: #dbeafe;
+    color: #2563eb;
+  }
+  .avisoBadge {
+    background: #dbeafe;
+    color: #1d4ed8;
+  }
+}
+
+.aviso_warning {
+  border-color: #fde68a;
+  background: #fffbeb;
+
+  .avisoIconWrapper {
+    background: #fef3c7;
+    color: #d97706;
+  }
+  .avisoBadge {
+    background: #fef3c7;
+    color: #b45309;
+  }
+}
+
+.aviso_alert {
+  border-color: #fecaca;
+  background: #fef2f2;
+
+  .avisoIconWrapper {
+    background: #fee2e2;
+    color: #dc2626;
+  }
+  .avisoBadge {
+    background: #fee2e2;
+    color: #b91c1c;
+  }
+}
+
+.emptyAvisos {
+  background: #f8fafc;
+  padding: 20px;
+  border-radius: 12px;
+  color: #64748b;
+  font-size: 14px;
+  text-align: center;
+  border: 1px dashed #cbd5e1;
+}

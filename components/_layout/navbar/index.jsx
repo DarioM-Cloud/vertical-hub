@@ -2,57 +2,61 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Settings } from 'lucide-react';
-import { ROUTES, NAV_LINKS } from '@/lib/routes.config';
-import { useAuth } from '@/context/AuthContext';
+import { Menu, MessageSquare, User } from 'lucide-react';
+import Container from '@/components/_base/layout/container';
+import Button from '@/components/_base/ui/button';
 import SettingsDrawer from '@/components/_base/ui/drawer';
+import { useAuth } from '@/context/AuthContext';
 import styles from './navbar.module.scss';
 
 export default function Navbar() {
-  const { user } = useAuth();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const { user } = useAuth();
 
   return (
     <>
       <nav className={styles.navbar}>
-        <div className={styles.container}>
-          <Link href={ROUTES.HOME.path} className={styles.logo}>
-            VERTICAL<span>HUB</span>
+        <Container className={styles.navContainer}>
+          <Link href="/" className={styles.logo}>
+            Vertical Hub
           </Link>
-          
-          <div className={styles.links}>
-            {NAV_LINKS.map((link) => (
-              <Link key={link.path} href={link.path} className={styles.navLink}>
-                {link.label}
-              </Link>
-            ))}
 
-            {user ? (
-              <div className={styles.userActions}>
-                <Link href={ROUTES.PERFIL.path} className={styles.profileLink}>
-                  Mi Perfil
+          <div className={styles.links}>
+            <Link href="/comunidad" className={styles.navLink}>
+              Comunidad
+            </Link>
+            {user && (
+              <>
+                <Link href="/mensajes" className={styles.navLink}>
+                  <MessageSquare size={20} />
                 </Link>
-                <button 
-                  className={styles.settingsBtn} 
-                  onClick={() => setIsDrawerOpen(true)}
-                  aria-label="Configuración"
-                >
-                  <Settings size={22} strokeWidth={2} />
-                </button>
-              </div>
+                <Link href="/perfil" className={styles.navLink}>
+                  <User size={20} />
+                </Link>
+              </>
+            )}
+          </div>
+
+          <div className={styles.actions}>
+            {user ? (
+              <Button variant="ghost" className={styles.menuBtn} onClick={() => setIsDrawerOpen(true)}>
+                <Menu size={24} />
+              </Button>
             ) : (
-              <Link href="/login" className={styles.loginLink}>
-                Iniciar Sesión
+              <Link href="/login">
+                <Button variant="primary">Iniciar Sesión</Button>
               </Link>
             )}
           </div>
-        </div>
+        </Container>
       </nav>
 
-      <SettingsDrawer 
-        isOpen={isDrawerOpen} 
-        onClose={() => setIsDrawerOpen(false)} 
-      />
+      {user && (
+        <SettingsDrawer
+          isOpen={isDrawerOpen}
+          onClose={() => setIsDrawerOpen(false)}
+        />
+      )}
     </>
   );
 }

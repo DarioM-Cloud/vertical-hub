@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { db } from '@/lib/firebase';
-import { doc, onSnapshot, collection, query, where, orderBy } from 'firebase/firestore';
+import { doc, onSnapshot, collection, query, where, orderBy, updateDoc } from 'firebase/firestore';
 
 export function useUserProfile(uid) {
   const [profile, setProfile] = useState(null);
@@ -52,5 +52,11 @@ export function useUserProfile(uid) {
     };
   }, [uid]);
 
-  return { profile, logbook, loading };
+  const updateProfile = async (data) => {
+    if (!uid) return;
+    const userRef = doc(db, 'usuarios', uid);
+    await updateDoc(userRef, data);
+  };
+
+  return { profile, logbook, loading, updateProfile };
 }

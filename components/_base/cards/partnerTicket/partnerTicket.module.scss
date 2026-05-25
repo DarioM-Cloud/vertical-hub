@@ -1,96 +1,136 @@
 .ticket {
-  display: flex;
   background: #ffffff;
+  border-radius: 16px;
+  padding: 20px;
   border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+  display: flex;
+  gap: 16px;
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0px 8px 24px rgba(15, 23, 42, 0.06);
+  }
 }
 
 .dateColumn {
-  background: #3b82f6;
-  color: #ffffff;
-  padding: 20px 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-width: 80px;
+  min-width: 60px;
+  border-right: 1px solid #e2e8f0;
+  padding-right: 16px;
 }
 
 .day {
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 800;
+  color: #0f172a;
 }
 
 .time {
-  font-size: 14px;
-  font-weight: 500;
-  opacity: 0.9;
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
 }
 
 .body {
-  padding: 16px;
   flex: 1;
   display: flex;
   flex-direction: column;
+  gap: 12px;
 }
 
 .topRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
 }
 
 .user {
+  font-size: 16px;
   font-weight: 700;
   color: #0f172a;
-  font-size: 16px;
 }
 
-.level {
-  background: #f1f5f9;
-  color: #475569;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 13px;
+.interesadosBadge {
+  background: #eff6ff;
+  color: #3b82f6;
+  font-size: 12px;
   font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 12px;
 }
 
 .message {
-  color: #64748b;
-  font-size: 14px;
-  margin: 0 0 16px 0;
+  margin: 0px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #334155;
   font-style: italic;
-  flex: 1;
 }
 
 .bottomRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: 4px;
 }
 
 .place {
   display: flex;
   align-items: center;
-  gap: 4px;
-  color: #0f172a;
-  font-size: 14px;
+  gap: 6px;
+  font-size: 13px;
+  color: #64748b;
   font-weight: 600;
+
+  svg {
+    color: #94a3b8;
+  }
+}
+
+.actionBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
 }
 
 .joinBtn {
-  background: #10b981;
+  background: #0f172a;
   color: #ffffff;
-  border: none;
-  padding: 6px 16px;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  
+
   &:hover {
-    background: #059669;
+    background: #1e293b;
+  }
+}
+
+.joinedBtn {
+  background: #f0fdf4;
+  color: #16a34a;
+  border: 1px solid #bbf7d0;
+
+  &:hover {
+    background: #dcfce7;
+    color: #15803d;
+  }
+}
+
+.deleteBtn {
+  background: #fef2f2;
+  color: #ef4444;
+  border: 1px solid #fecaca;
+
+  &:hover {
+    background: #fee2e2;
+    color: #dc2626;
   }
 }

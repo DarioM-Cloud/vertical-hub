@@ -1,51 +1,87 @@
+'use client';
+
+import { useState } from 'react';
+import { Map as MapIcon, SlidersHorizontal } from 'lucide-react';
+import Container from '@/components/_base/layout/container';
+import Section from '@/components/_base/layout/section';
 import GymCard from '@/components/_base/cards/gymCard';
+import GymMap from '@/components/_base/ui/map';
+import FilterBar from '@/components/_base/ui/filterBar';
 import styles from './home.module.scss';
 
-export default function Home({ rocodromos = [], loading }) {
+export default function HomeTemplate({ rocodromos = [], tickets = [] }) {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedUbicacion, setSelectedUbicacion] = useState('');
+  const [selectedModalidad, setSelectedModalidad] = useState('');
+  const [selectedServicio, setSelectedServicio] = useState('');
+
+  const ubicacionesUnicas = Array.from(new Set(rocodromos.map(r => r.ubicacion)));
+
+  const filteredRocodromos = rocodromos.filter(roco => {
+    const matchesSearch = roco.nombre.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesUbicacion = !selectedUbicacion || roco.ubicacion === selectedUbicacion;
+    const matchesModalidad = !selectedModalidad || (roco.modalidades && roco.modalidades.includes(selectedModalidad));
+    const matchesServicio = !selectedServicio || (roco.servicios && roco.servicios.includes(selectedServicio));
+
+    return matchesSearch && matchesUbicacion && matchesModalidad && matchesServicio;
+  });
+
   return (
-    <div className={styles.home}>
+    <div className={styles.homeWrapper}>
       <section className={styles.hero}>
-        <div className={styles.container}>
-          <h1>Tu próxima sesión empieza <span>aquí</span></h1>
-          <p>Consulta el radar de ocupación y encuentra compañeros de escalada en segundos.</p>
-          <div className={styles.actions}>
-            <button className={styles.mainBtn}>Ver Centros Cercanos</button>
-            <button className={styles.secBtn}>Buscar Compañero</button>
+        <Container>
+          <div className={styles.heroContent}>
+            <h1>Vertical Hub</h1>
+            <p>La red de escalada más grande de España</p>
           </div>
-        </div>
+        </Container>
       </section>
 
-      <section className={styles.radarSection}>
-        <div className={styles.container}>
-          <div className={styles.sectionHeader}>
-            <h2>Radar de Ocupación</h2>
-            <span>Actualizado ahora mismo</span>
+      <Section className={styles.gymsSection}>
+        <Container>
+          <FilterBar 
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            selectedUbicacion={selectedUbicacion}
+            onUbicacionChange={setSelectedUbicacion}
+            ubicacionesUnicas={ubicacionesUnicas}
+            selectedModalidad={selectedModalidad}
+            onModalidadChange={setSelectedModalidad}
+            selectedServicio={selectedServicio}
+            onServicioChange={setSelectedServicio}
+          />
+
+          <div className={styles.resultsHeader}>
+            <h2>Rocódromos disponibles ({filteredRocodromos.length})</h2>
           </div>
 
-          {loading ? (
-            <div className={styles.loading}>Sincronizando con los centros...</div>
-          ) : rocodromos.length > 0 ? (
-            <div className={styles.grid}>
-              {rocodromos.map((roco) => (
-                <GymCard key={roco.id} {...roco} />
-              ))}
+          {filteredRocodromos.length === 0 ? (
+            <div className={styles.noResults}>
+              <SlidersHorizontal size={36} />
+              <p>No se encontraron rocódromos que cumplan con los criterios seleccionados.</p>
             </div>
           ) : (
-            <div className={styles.empty}>No hay centros disponibles en este momento.</div>
+            <div className={styles.grid}>
+              {filteredRocodromos.map((roco) => {
+                const rocoTickets = tickets.filter(t => t.rocodromoId === roco.id);
+                return <GymCard key={roco.id} data={roco} activeTickets={rocoTickets} />;
+              })}
+            </div>
           )}
-        </div>
-      </section>
+        </Container>
+      </Section>
 
-      <section className={styles.activity}>
-        <div className={styles.container}>
-          <h2>Actividad en la Comunidad</h2>
-          <div className={styles.activityGrid}>
-            <div className={styles.activityCard}>Nuevas betas subidas en <strong>Sputnik</strong></div>
-            <div className={styles.activityCard}>3 escaladores buscando partner en <strong>Sharma</strong></div>
-            <div className={styles.activityCard}>Evento de bloque este viernes en <strong>Arkose</strong></div>
+      <Section className={styles.mapSection}>
+        <Container>
+          <div className={styles.sectionHeader}>
+            <MapIcon size={24} />
+            <h2>Mapa de Centros</h2>
           </div>
-        </div>
-      </section>
+          <div className={styles.mapWrapper}>
+            <GymMap gyms={filteredRocodromos} />
+          </div>
+        </Container>
+      </Section>
     </div>
   );
 }

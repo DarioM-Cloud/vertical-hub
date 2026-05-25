@@ -1,0 +1,47 @@
+.occupancyCard {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0px 10px 30px rgba(15, 23, 42, 0.08);
+  margin-bottom: 40px;
+  border: 1px solid #e2e8f0;
+}
+
+.occupancyInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.occupancyLabel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+
+  svg {
+    color: #64748b;
+  }
+}
+
+.occupancyNumbers {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.progressBar {
+  width: 100%;
+  height: 12px;
+  background: #f1f5f9;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 12px;
+  transition: width 0.5s ease-in-out;
+}

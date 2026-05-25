@@ -1,36 +1,30 @@
 .navbar {
-  width: 100%;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  height: 70px;
   background-color: #ffffff;
   border-bottom: 1px solid #e2e8f0;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 100;
-  height: 70px;
+  z-index: 50;
   display: flex;
   align-items: center;
 }
 
-.container {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
+.navContainer {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
+  height: 100%;
 }
 
 .logo {
-  font-size: 22px;
-  font-weight: 900;
+  font-size: 20px;
+  font-weight: 800;
   color: #0f172a;
   text-decoration: none;
   letter-spacing: -0.5px;
-
-  span {
-    color: #3b82f6;
-  }
 }
 
 .links {
@@ -40,68 +34,26 @@
 }
 
 .navLink {
-  color: #475569;
-  text-decoration: none;
+  font-size: 15px;
   font-weight: 600;
-  font-size: 15px;
-  transition: color 0.2s;
-
-  &:hover {
-    color: #3b82f6;
-  }
-}
-
-.userActions {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.profileLink {
-  color: #0f172a;
-  text-decoration: none;
-  font-weight: 700;
-  font-size: 15px;
-  background-color: #f1f5f9;
-  padding: 8px 16px;
-  border-radius: 20px;
-  transition: background-color 0.2s;
-
-  &:hover {
-    background-color: #e2e8f0;
-  }
-}
-
-.settingsBtn {
-  background: transparent;
-  border: none;
   color: #475569;
+  text-decoration: none;
+  transition: color 0.2s;
   display: flex;
   align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  padding: 8px;
-  border-radius: 50%;
-  transition: all 0.2s;
 
   &:hover {
-    background: #f1f5f9;
     color: #0f172a;
-    transform: rotate(45deg);
   }
 }
 
-.loginLink {
-  color: #ffffff;
-  background-color: #3b82f6;
-  text-decoration: none;
-  font-weight: 700;
-  font-size: 15px;
-  padding: 8px 20px;
-  border-radius: 8px;
-  transition: background-color 0.2s;
+.actions {
+  display: flex;
+  align-items: center;
+}
 
-  &:hover {
-    background-color: #2563eb;
-  }
+.menuBtn {
+  padding: 8px;
+  color: #0f172a;
+  cursor: pointer;
 }

@@ -1,0 +1,59 @@
+.logForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.formRow {
+  display: flex;
+  gap: 16px;
+  
+  .inputGroup {
+    flex: 1;
+  }
+}
+
+@media (max-width: 600px) {
+  .formRow {
+    flex-direction: column;
+  }
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #475569;
+  }
+
+  input, select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    transition: all 0.2s;
+  }
+}
+
+.inputDisabled {
+  background: #f1f5f9;
+  color: #64748b;
+  cursor: not-allowed;
+}
+
+.inputActive, .selectActive {
+  background: #ffffff;
+  color: #0f172a;
+
+  &:focus {
+    border-color: #3b82f6;
+    box-shadow: 0px 0px 0px 3px rgba(59, 130, 246, 0.1);
+  }
+}

@@ -1,15 +1,15 @@
 'use client';
 
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/context/AuthContext';
 import { useInbox } from '@/hooks/useInbox';
 import MensajesTemplate from '@/components/templates/mensajes';
 import Loader from '@/components/_base/ui/loader';
 
 export default function MensajesPage() {
   const { user } = useAuth();
-  const { chats, loading } = useInbox(user?.uid);
+  const { chats, randomUsers, loading } = useInbox(user?.uid);
 
   if (loading) return <Loader />;
 
-  return <MensajesTemplate chats={chats} />;
+  return <MensajesTemplate chats={chats || []} randomUsers={randomUsers || []} currentUser={user} />;
 }
