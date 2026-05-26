@@ -1,23 +1,21 @@
 'use client';
 
-import { useAuth } from '@/context/AuthContext';
-import { useUserProfile } from '@/hooks/useUserProfile';
+import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 import PerfilTemplate from '@/components/templates/perfil';
 import Loader from '@/components/_base/ui/loader';
 
+function PerfilContent() {
+  const searchParams = useSearchParams();
+  const id = searchParams.get('id');
+
+  return <PerfilTemplate targetUserId={id} />;
+}
+
 export default function PerfilPage() {
-  const { user } = useAuth();
-  const { profile, logbook, loading, updateProfile } = useUserProfile(user?.uid);
-
-  if (loading) return <Loader />;
-
   return (
-    <PerfilTemplate 
-      profile={profile} 
-      logbook={logbook} 
-      currentUserId={user?.uid || null} 
-      currentUserRole={user?.rol || 'user'} 
-      onUpdateProfile={updateProfile}
-    />
+    <Suspense fallback={<Loader />}>
+      <PerfilContent />
+    </Suspense>
   );
 }

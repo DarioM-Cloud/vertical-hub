@@ -115,7 +115,11 @@ export default function RocodromoTemplate({ rocodromo, posts, avisos, vias, sect
               <h2>Comunidad local</h2>
             </div>
             
-            <CreatePost rocodromoId={rocodromo.id} currentUser={currentUser} />
+            <CreatePost 
+              rocodromoId={rocodromo.id} 
+              rocodromoNombre={rocodromo.nombre} 
+              currentUser={currentUser} 
+            />
 
             <div className={styles.postsList}>
               {posts?.length === 0 ? (

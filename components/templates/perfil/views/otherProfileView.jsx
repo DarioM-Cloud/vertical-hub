@@ -1,26 +1,19 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
-import { User, MapPin, Activity, Award, Calendar, Share2, TrendingUp, Users, UserPlus, UserCheck, Clock, Lock, Globe, MessageSquare } from 'lucide-react';
+import { User, MapPin, Activity, Award, Calendar, Share2, TrendingUp, Lock, Globe, Hash, UserPlus } from 'lucide-react';
 import Container from '@/components/_base/layout/container';
 import Button from '@/components/_base/ui/button';
-import { useFriendship } from '@/hooks/useFriendship';
 import styles from '../perfil.module.scss';
 
-export default function OtherProfileView({ profile, logbook, currentUserId }) {
+export default function OtherProfileView({ profile, logbook = [], posts = [] }) {
   const [activeTab, setActiveTab] = useState('actividad');
-  
-  const { relation, loading: loadingFriendship, handleAction } = useFriendship(
-    currentUserId,
-    profile.id,
-    profile.esPrivado
-  );
+  const [isFollowing, setIsFollowing] = useState(false);
 
-  const stats = profile?.stats || { totalAscensiones: 0, gradoMaximo: profile?.nivelEscalada || '-', amigos: 0 };
+  const stats = profile?.stats || { totalAscensiones: logbook.length, gradoMaximo: profile?.nivelEscalada || '-', amigos: 0 };
   const regYear = profile?.fechaRegistro?.toDate ? profile.fechaRegistro.toDate().getFullYear() : new Date().getFullYear();
-  const idCombo = [currentUserId, profile.id].sort().join('_');
-  const isFriend = relation && relation.estado === 'aceptados';
+  
+  const isPrivate = profile?.esPrivado;
 
   return (
     <Container className={styles.container}>
@@ -44,39 +37,20 @@ export default function OtherProfileView({ profile, logbook, currentUserId }) {
             <Button variant="outline" className={styles.iconBtn}>
               <Share2 size={18} />
             </Button>
-            {!loadingFriendship && (
-              <>
-                {!relation && (
-                  <Button variant="primary" className={styles.actionBtn} onClick={handleAction}>
-                    <UserPlus size={18} />
-                    {profile?.esPrivado ? 'Enviar solicitud' : 'Añadir amigo'}
-                  </Button>
-                )}
-                {relation && relation.estado === 'pendiente' && (
-                  <Button variant="outline" className={styles.actionBtn} onClick={handleAction}>
-                    <Clock size={18} />
-                    {relation.remitenteId === currentUserId ? 'Solicitud enviada' : 'Aceptar Solicitud'}
-                  </Button>
-                )}
-                {isFriend && (
-                  <Button variant="outline" className={styles.actionBtn} onClick={handleAction}>
-                    <UserCheck size={18} />
-                    Amigos
-                  </Button>
-                )}
-              </>
-            )}
-            <Link href={`/mensajes/${idCombo}`} passHref>
-              <Button variant="outline" className={styles.iconBtn}>
-                <MessageSquare size={18} />
-              </Button>
-            </Link>
+            <Button 
+              variant={isFollowing ? "outline" : "primary"} 
+              className={styles.actionBtn} 
+              onClick={() => setIsFollowing(!isFollowing)}
+            >
+              <UserPlus size={18} />
+              {isFollowing ? 'Amigos' : 'Añadir Amigo'}
+            </Button>
           </div>
         </header>
 
         <div className={styles.infoSection}>
           <div className={styles.nameHeader}>
-            <h1 className={styles.name}>{profile?.nombre}</h1>
+            <h1 className={styles.name}>{profile?.nombre || 'Atleta'}</h1>
             <span className={styles.username}>@{profile?.email?.split('@')[0]}</span>
           </div>
           
@@ -91,7 +65,7 @@ export default function OtherProfileView({ profile, logbook, currentUserId }) {
             </span>
             <span className={styles.badge}>
               <MapPin size={14} />
-              Burgos
+              {profile?.ubicacion || 'Sin ubicación'}
             </span>
             <span className={styles.badge}>
               <Calendar size={14} />
@@ -104,12 +78,12 @@ export default function OtherProfileView({ profile, logbook, currentUserId }) {
 
         <div className={styles.statsContainer}>
           <div className={styles.statBox}>
-            <span className={styles.statNumber}>{stats.totalAscensiones}</span>
+            <span className={styles.statNumber}>{isPrivate ? '-' : logbook.length}</span>
             <span className={styles.statLabel}>Ascensiones</span>
           </div>
           <div className={styles.statDivider}></div>
           <div className={styles.statBox}>
-            <span className={styles.statNumber}>{stats.gradoMaximo}</span>
+            <span className={styles.statNumber}>{isPrivate ? '-' : stats.gradoMaximo}</span>
             <span className={styles.statLabel}>Grado Máx</span>
           </div>
           <div className={styles.statDivider}></div>
@@ -120,80 +94,93 @@ export default function OtherProfileView({ profile, logbook, currentUserId }) {
         </div>
       </div>
 
-      {profile?.esPrivado && !isFriend ? (
-        <div className={styles.emptyState}>
-          <Lock size={24} style={{ marginBottom: '12px', color: '#ef4444' }} />
-          <p>Este perfil es privado. Envía una solicitud de amistad para ver su historial técnico y logbook.</p>
+      {isPrivate ? (
+        <div className={styles.emptyState} style={{ marginTop: '40px' }}>
+          <Lock size={48} style={{ margin: '0 auto 16px', color: '#cbd5e1' }} />
+          <p>Este perfil es privado. Añádele como amigo para ver su actividad y publicaciones.</p>
         </div>
       ) : (
-        <div className={styles.tabsContainer}>
-          <div className={styles.tabs}>
-            <button 
-              className={`${styles.tab} ${activeTab === 'actividad' ? styles.activeTab : ''}`}
-              onClick={() => setActiveTab('actividad')}
-            >
-              <TrendingUp size={18} />
-              Actividad Reciente
-            </button>
-            <button 
-              className={`${styles.tab} ${activeTab === 'logbook' ? styles.activeTab : ''}`}
-              onClick={() => setActiveTab('logbook')}
-            >
-              <Award size={18} />
-              Logbook ({logbook.length})
-            </button>
-            <button 
-              className={`${styles.tab} ${activeTab === 'amigos' ? styles.activeTab : ''}`}
-              onClick={() => setActiveTab('amigos')}
-            >
-              <Users size={18} />
-              Amigos
-            </button>
+        <>
+          <div className={styles.tabsContainer}>
+            <div className={styles.tabs}>
+              <button className={`${styles.tab} ${activeTab === 'actividad' ? styles.activeTab : ''}`} onClick={() => setActiveTab('actividad')}>
+                <TrendingUp size={18} /> Actividad
+              </button>
+              <button className={`${styles.tab} ${activeTab === 'logbook' ? styles.activeTab : ''}`} onClick={() => setActiveTab('logbook')}>
+                <Award size={18} /> Logbook
+              </button>
+            </div>
+            <div className={styles.tabContent}>
+              {activeTab === 'actividad' && (
+                 <div className={styles.activityList}>
+                    {logbook.length === 0 ? <div className={styles.emptyState}>No hay actividad reciente.</div> : 
+                    logbook.map(log => (
+                      <div key={log.id} className={styles.activityItem}>
+                        <div className={styles.activityIcon}><Award size={20} /></div>
+                        <div className={styles.activityInfo}>
+                          <div className={styles.activityHeader}><h4>{log.via}</h4><span className={styles.gradeBadge}>{log.grado}</span></div>
+                          <div className={styles.activityMeta}><span>{log.rocodromo}</span> • <span>{log.tipo}</span></div>
+                        </div>
+                      </div>
+                    ))}
+                 </div>
+              )}
+              {activeTab === 'logbook' && (
+                 <div className={styles.activityList}>
+                    {logbook.length === 0 ? <div className={styles.emptyState}>El historial de encadenes está vacío.</div> : 
+                    logbook.map(log => (
+                      <div key={log.id} className={styles.activityItem}>
+                        <div className={styles.activityIcon}><Hash size={20} /></div>
+                        <div className={styles.activityInfo}>
+                          <div className={styles.activityHeader}><h4>{log.via} ({log.rocodromo})</h4><span className={styles.gradeBadge}>{log.grado}</span></div>
+                          <div className={styles.activityMeta}><span>Estilo: {log.tipo}</span> {log.intentos && <span>• Intentos: {log.intentos}</span>}</div>
+                        </div>
+                      </div>
+                    ))}
+                 </div>
+              )}
+            </div>
           </div>
-          
-          <div className={styles.tabContent}>
-            {activeTab === 'actividad' && (
-              <div className={styles.activityList}>
-                {logbook.length === 0 ? (
-                  <div className={styles.emptyState}>No hay actividad reciente.</div>
-                ) : (
-                  logbook.map(log => (
-                    <div key={log.id} className={styles.activityItem}>
-                      <div className={styles.activityIcon}>
-                        <Award size={20} />
+
+          <div className={styles.postsSection}>
+            <div className={styles.sectionHeader}>
+              <h2>Publicaciones</h2>
+            </div>
+            
+            {posts.length === 0 ? (
+              <div className={styles.emptyState}>No ha compartido ninguna publicación todavía.</div>
+            ) : (
+              <div className={styles.postsGrid}>
+                {posts.map(post => (
+                  <div key={post.id} className={styles.profilePostCard}>
+                    {post.mediaUrl && (
+                      <div className={styles.postMediaWrapper}>
+                        {post.mediaType === 'video' ? (
+                          <video src={post.mediaUrl} controls className={styles.postMedia} />
+                        ) : (
+                          <img src={post.mediaUrl} alt="Publicación" className={styles.postMedia} />
+                        )}
                       </div>
-                      <div className={styles.activityInfo}>
-                        <div className={styles.activityHeader}>
-                          <h4>{log.via}</h4>
-                          <span className={styles.gradeBadge}>{log.grado}</span>
-                        </div>
-                        <div className={styles.activityMeta}>
-                          <span>{log.rocodromo}</span>
-                          <span>•</span>
-                          <span>{log.tipo}</span>
-                          <span>•</span>
-                          <span>{log.fechaFormateada}</span>
-                        </div>
-                      </div>
+                    )}
+                    
+                    <div className={styles.postContentWrapper}>
+                      {post.rocodromoNombre && (
+                        <span className={styles.rocoBadge}>
+                          <MapPin size={12} />
+                          {post.rocodromoNombre}
+                        </span>
+                      )}
+                      <p className={styles.postText}>{post.texto}</p>
+                      <span className={styles.postDate}>
+                        {post.fecha?.toDate ? new Intl.DateTimeFormat('es-ES').format(post.fecha.toDate()) : 'Reciente'}
+                      </span>
                     </div>
-                  ))
-                )}
-              </div>
-            )}
-
-            {activeTab === 'logbook' && (
-              <div className={styles.emptyState}>
-                <p>Historial de escalada de {profile.nombre}.</p>
-              </div>
-            )}
-
-            {activeTab === 'amigos' && (
-              <div className={styles.emptyState}>
-                <p>Conexiones autorizadas de este atleta.</p>
+                  </div>
+                ))}
               </div>
             )}
           </div>
-        </div>
+        </>
       )}
     </Container>
   );

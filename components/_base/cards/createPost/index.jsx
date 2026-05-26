@@ -6,7 +6,7 @@ import Button from '@/components/_base/ui/button';
 import { usePosts } from '@/hooks/usePosts';
 import styles from './createPost.module.scss';
 
-export default function CreatePost({ rocodromoId, currentUser }) {
+export default function CreatePost({ rocodromoId, rocodromoNombre, currentUser }) {
   const [texto, setTexto] = useState('');
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -36,11 +36,10 @@ export default function CreatePost({ rocodromoId, currentUser }) {
     if (!texto.trim() && !file) return;
 
     await createPost(
-      rocodromoId,
-      currentUser.uid,
-      currentUser.nombre || currentUser.email?.split('@')[0] || 'Escalador',
-      currentUser.fotoPerfil || '',
+      currentUser,
       texto,
+      rocodromoId,
+      rocodromoNombre,
       file
     );
 

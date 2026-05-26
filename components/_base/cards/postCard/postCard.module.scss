@@ -56,6 +56,20 @@
   font-weight: 500;
 }
 
+.rocodromoTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #3b82f6;
+  background: #eff6ff;
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin-top: 4px;
+  width: fit-content;
+}
+
 .content {
   margin-bottom: 16px;
 }
@@ -104,5 +118,160 @@
 
   &:hover {
     color: #3b82f6;
+  }
+}
+
+.liked {
+  color: #ef4444;
+  
+  &:hover {
+    color: #dc2626;
+  }
+}
+
+.commentsSection {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px dashed #e2e8f0;
+}
+
+.commentsList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.noComments {
+  font-size: 13px;
+  color: #94a3b8;
+  font-style: italic;
+}
+
+.commentItem {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.commentAvatar {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+
+  img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+}
+
+.commentAvatarPlaceholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #e2e8f0;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.commentBubble {
+  background: #f8fafc;
+  padding: 8px 12px;
+  border-radius: 12px;
+  border-top-left-radius: 2px;
+}
+
+.commentName {
+  display: block;
+  font-size: 12px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 2px;
+}
+
+.commentText {
+  margin: 0px;
+  font-size: 13px;
+  color: #334155;
+}
+
+.commentForm {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+
+  input {
+    flex: 1;
+    background: #f1f5f9;
+    border: 1px solid transparent;
+    padding: 10px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    outline: none;
+    transition: all 0.2s;
+
+    &:focus {
+      background: #ffffff;
+      border-color: #3b82f6;
+    }
+  }
+}
+
+.sendBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #3b82f6;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:disabled {
+    background: #cbd5e1;
+    cursor: not-allowed;
+  }
+
+  &:not(:disabled):hover {
+    background: #2563eb;
+  }
+}
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  flex: 1; /* Esto empuja el botón de borrar a la derecha */
+}
+
+.deleteBtn {
+  background: rgba(254, 226, 226, 0.5);
+  color: #ef4444;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #fee2e2;
   }
 }

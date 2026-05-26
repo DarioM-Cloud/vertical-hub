@@ -1,75 +1,169 @@
 'use client';
 
-import Link from 'next/link';
-import { MessageSquare, User, ChevronRight, UserPlus } from 'lucide-react';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Send, User, MessageSquare, ExternalLink, MessageCircle } from 'lucide-react';
 import Container from '@/components/_base/layout/container';
 import Button from '@/components/_base/ui/button';
 import styles from './mensajes.module.scss';
 
-export default function MensajesTemplate({ chats = [], randomUsers = [], currentUser }) {
+export default function MensajesTemplate({ chats = [], activeChat, mensajes = [], onSendMessage, currentUser, randomUsers = [] }) {
+  const router = useRouter();
+  const [nuevoMensaje, setNuevoMensaje] = useState('');
+
+  const handleSend = (e) => {
+    e.preventDefault();
+    if (!nuevoMensaje.trim()) return;
+    onSendMessage(nuevoMensaje);
+    setNuevoMensaje('');
+  };
+
+  const getOtherUserId = () => {
+     if (!activeChat) return null;
+     return activeChat.uid || activeChat.id || activeChat.otherUserId;
+  };
+
   return (
     <Container className={styles.container}>
-      <header className={styles.header}>
-        <h1>Mensajes</h1>
-      </header>
+      <div className={styles.messagingLayout}>
+        <div className={styles.sidebar}>
+          <div className={styles.sidebarHeader}>
+            <h3>Mensajes</h3>
+          </div>
+          
+          <div className={styles.scrollArea}>
+              <div className={styles.sectionTitle}>Tus Conversaciones</div>
+              <div className={styles.chatsList}>
+                {chats.length === 0 ? (
+                  <div className={styles.emptyChats}>No tienes conversaciones activas.</div>
+                ) : (
+                  chats.map(chat => {
+                    const isSelected = activeChat && (activeChat.id === chat.id || activeChat.uid === chat.otherUserId);
+                    return (
+                      <div 
+                        key={chat.id} 
+                        className={`${styles.chatItem} ${isSelected ? styles.chatItemActive : ''}`}
+                        onClick={() => router.push(`/mensajes/chat?id=${chat.otherUserId || chat.id}`)}
+                      >
+                        <div className={styles.chatAvatar}>
+                          {chat.userAvatar ? (
+                            <img src={chat.userAvatar} alt={chat.userName} />
+                          ) : (
+                            <div className={styles.avatarPlaceholder}>
+                              <User size={18} />
+                            </div>
+                          )}
+                        </div>
+                        <div className={styles.chatInfo}>
+                          <span className={styles.chatName}>{chat.userName}</span>
+                          <p className={styles.chatLastMessage}>{chat.ultimoMensaje || 'Sin mensajes'}</p>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
 
-      <div className={styles.content}>
-        {chats.length > 0 ? (
-          <div className={styles.chatList}>
-            {chats.map(chat => {
-              const comboId = [currentUser?.uid, chat.friendId].sort().join('_');
-              return (
-                <Link key={chat.chatId} href={`/mensajes/${comboId}`} className={styles.chatCard}>
-                  <div className={styles.avatar}>
-                    {chat.fotoPerfil ? (
-                      <img src={chat.fotoPerfil} alt={chat.nombre} />
+              {randomUsers && randomUsers.length > 0 && (
+                <>
+                  <div className={styles.sectionTitle}>Descubrir Atletas</div>
+                  <div className={styles.chatsList}>
+                    {randomUsers.map(u => (
+                      <div key={u.id || u.uid} className={styles.suggestedItem}>
+                        <div className={styles.chatAvatar}>
+                          {u.fotoPerfil ? (
+                            <img src={u.fotoPerfil} alt={u.nombre} />
+                          ) : (
+                            <div className={styles.avatarPlaceholder}>
+                              <User size={18} />
+                            </div>
+                          )}
+                        </div>
+                        <div className={styles.chatInfo}>
+                          <span className={styles.chatName}>{u.nombre || 'Atleta'}</span>
+                        </div>
+                        <div className={styles.suggestedActions}>
+                           <button className={styles.iconBtn} onClick={() => router.push(`/perfil?id=${u.id || u.uid}`)}>
+                              <ExternalLink size={16} />
+                           </button>
+                           <button className={styles.iconBtn} onClick={() => router.push(`/mensajes/chat?id=${u.id || u.uid}`)}>
+                              <MessageCircle size={16} />
+                           </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+          </div>
+        </div>
+
+        <div className={styles.chatWindow}>
+          {activeChat ? (
+            <>
+              <div className={styles.chatHeader}>
+                <div className={styles.headerUser}>
+                  <div className={styles.chatAvatar}>
+                    {(activeChat.userAvatar || activeChat.fotoPerfil) ? (
+                      <img src={activeChat.userAvatar || activeChat.fotoPerfil} alt={activeChat.userName || activeChat.nombre} />
                     ) : (
-                      <User size={24} />
+                      <div className={styles.avatarPlaceholder}>
+                        <User size={20} />
+                      </div>
                     )}
                   </div>
-                  <div className={styles.chatInfo}>
-                    <span className={styles.name}>{chat.nombre}</span>
+                  <div className={styles.headerInfo}>
+                    <span className={styles.headerName}>{activeChat.userName || activeChat.nombre || 'Atleta'}</span>
                   </div>
-                  <ChevronRight size={20} className={styles.arrow} />
-                </Link>
-              );
-            })}
-          </div>
-        ) : (
-          <div className={styles.emptyState}>
-            <div className={styles.emptyIcon}>
-              <MessageSquare size={48} />
-            </div>
-            <h2>Empieza a conversar</h2>
-            <p>Aún no tienes chats activos. Aquí tienes algunos escaladores con los que podrías conectar:</p>
-            
-            <div className={styles.randomUsersList}>
-              {randomUsers.map(user => (
-                <div key={user.id} className={styles.randomUserCard}>
-                  <div className={styles.userInfo}>
-                    <div className={styles.avatarSmall}>
-                      {user.fotoPerfil ? (
-                        <img src={user.fotoPerfil} alt={user.nombre} />
-                      ) : (
-                        <User size={20} />
-                      )}
-                    </div>
-                    <div className={styles.userDetails}>
-                      <span className={styles.name}>{user.nombre}</span>
-                      <span className={styles.level}>{user.nivelEscalada || 'Sin nivel'}</span>
-                    </div>
-                  </div>
-                  <Link href={`/perfil/${user.id}`}>
-                    <Button variant="outline" className={styles.connectBtn}>
-                      <UserPlus size={16} />
-                      Ver perfil
-                    </Button>
-                  </Link>
                 </div>
-              ))}
+                <Button 
+                  variant="outline" 
+                  className={styles.profileBtn}
+                  onClick={() => router.push(`/perfil?id=${getOtherUserId()}`)}
+                >
+                  Ver Perfil
+                </Button>
+              </div>
+
+              <div className={styles.messagesContainer}>
+                {mensajes.length === 0 ? (
+                  <div className={styles.emptyMessages}>Comienza la conversación enviando un mensaje.</div>
+                ) : (
+                  mensajes.map(msg => {
+                    const isOwn = msg.remitenteId === currentUser?.uid || msg.senderId === currentUser?.uid;
+                    return (
+                      <div 
+                        key={msg.id} 
+                        className={`${styles.messageWrapper} ${isOwn ? styles.messageOwn : styles.messageOther}`}
+                      >
+                        <div className={styles.messageBubble}>
+                          <p>{msg.texto}</p>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+
+              <form className={styles.inputForm} onSubmit={handleSend}>
+                <input 
+                  type="text" 
+                  placeholder="Escribe un mensaje..." 
+                  value={nuevoMensaje}
+                  onChange={(e) => setNuevoMensaje(e.target.value)}
+                />
+                <button type="submit" disabled={!nuevoMensaje.trim()} className={styles.sendBtn}>
+                  <Send size={18} />
+                </button>
+              </form>
+            </>
+          ) : (
+            <div className={styles.noActiveChat}>
+              <MessageSquare size={48} />
+              <p>Selecciona una conversación o descubre nuevos Escaladores para empezar a hablar.</p>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </Container>
   );

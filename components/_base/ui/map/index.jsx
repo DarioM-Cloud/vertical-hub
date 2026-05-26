@@ -9,7 +9,7 @@ const center = { lat: 40.4168, lng: -3.7038 };
 export default function GymMap({ gyms }) {
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
-    googleMapsApiKey: "AIzaSyA-dD1kGoRkTLrsvE-sD3NNmzBI1B9eRrg" 
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
   });
 
   const [map, setMap] = useState(null);
