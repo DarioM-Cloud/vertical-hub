@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Send, User, MessageSquare, ExternalLink, MessageCircle } from 'lucide-react';
 import Container from '@/components/_base/layout/container';
 import Button from '@/components/_base/ui/button';
@@ -10,6 +11,15 @@ import styles from './mensajes.module.scss';
 export default function MensajesTemplate({ chats = [], activeChat, mensajes = [], onSendMessage, currentUser, randomUsers = [] }) {
   const router = useRouter();
   const [nuevoMensaje, setNuevoMensaje] = useState('');
+  const mensajesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    mensajesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [mensajes]);
 
   const handleSend = (e) => {
     e.preventDefault();
@@ -18,7 +28,7 @@ export default function MensajesTemplate({ chats = [], activeChat, mensajes = []
     setNuevoMensaje('');
   };
 
-  const getOtherUserId = () => {
+  const obtenerIdOtroUsuario = () => {
      if (!activeChat) return null;
      return activeChat.uid || activeChat.id || activeChat.otherUserId;
   };
@@ -32,37 +42,37 @@ export default function MensajesTemplate({ chats = [], activeChat, mensajes = []
           </div>
           
           <div className={styles.scrollArea}>
-              <div className={styles.sectionTitle}>Tus Conversaciones</div>
-              <div className={styles.chatsList}>
-                {chats.length === 0 ? (
-                  <div className={styles.emptyChats}>No tienes conversaciones activas.</div>
-                ) : (
-                  chats.map(chat => {
-                    const isSelected = activeChat && (activeChat.id === chat.id || activeChat.uid === chat.otherUserId);
-                    return (
-                      <div 
-                        key={chat.id} 
-                        className={`${styles.chatItem} ${isSelected ? styles.chatItemActive : ''}`}
-                        onClick={() => router.push(`/mensajes/chat?id=${chat.otherUserId || chat.id}`)}
-                      >
-                        <div className={styles.chatAvatar}>
-                          {chat.userAvatar ? (
-                            <img src={chat.userAvatar} alt={chat.userName} />
-                          ) : (
-                            <div className={styles.avatarPlaceholder}>
-                              <User size={18} />
-                            </div>
-                          )}
+              {chats.length > 0 && (
+                <>
+                  <div className={styles.sectionTitle}>Tus Conversaciones</div>
+                  <div className={styles.chatsList}>
+                    {chats.map(chat => {
+                      const estaSeleccionado = activeChat && (activeChat.id === chat.id || activeChat.uid === chat.otherUserId);
+                      return (
+                        <div 
+                          key={chat.chatId || chat.id} 
+                          className={`${styles.chatItem} ${estaSeleccionado ? styles.chatItemActive : ''}`}
+                          onClick={() => router.push(`/mensajes/chat?id=${chat.otherUserId || chat.id}`)}
+                        >
+                          <div className={styles.chatAvatar}>
+                            {(chat.fotoPerfil || chat.userAvatar) ? (
+                              <img src={chat.fotoPerfil || chat.userAvatar} alt={chat.nombre || chat.userName} />
+                            ) : (
+                              <div className={styles.avatarPlaceholder}>
+                                <User size={18} />
+                              </div>
+                            )}
+                          </div>
+                          <div className={styles.chatInfo}>
+                            <span className={styles.chatName}>{chat.nombre || chat.userName}</span>
+                            <p className={styles.chatLastMessage}>{chat.ultimoMensaje || 'Sin mensajes'}</p>
+                          </div>
                         </div>
-                        <div className={styles.chatInfo}>
-                          <span className={styles.chatName}>{chat.userName}</span>
-                          <p className={styles.chatLastMessage}>{chat.ultimoMensaje || 'Sin mensajes'}</p>
-                        </div>
-                      </div>
-                    );
-                  })
-                )}
-              </div>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
 
               {randomUsers && randomUsers.length > 0 && (
                 <>
@@ -102,7 +112,7 @@ export default function MensajesTemplate({ chats = [], activeChat, mensajes = []
           {activeChat ? (
             <>
               <div className={styles.chatHeader}>
-                <div className={styles.headerUser}>
+                <Link href={`/perfil?id=${obtenerIdOtroUsuario()}`} className={styles.headerUser} style={{ textDecoration: 'none' }}>
                   <div className={styles.chatAvatar}>
                     {(activeChat.userAvatar || activeChat.fotoPerfil) ? (
                       <img src={activeChat.userAvatar || activeChat.fotoPerfil} alt={activeChat.userName || activeChat.nombre} />
@@ -115,11 +125,11 @@ export default function MensajesTemplate({ chats = [], activeChat, mensajes = []
                   <div className={styles.headerInfo}>
                     <span className={styles.headerName}>{activeChat.userName || activeChat.nombre || 'Atleta'}</span>
                   </div>
-                </div>
+                </Link>
                 <Button 
                   variant="outline" 
                   className={styles.profileBtn}
-                  onClick={() => router.push(`/perfil?id=${getOtherUserId()}`)}
+                  onClick={() => router.push(`/perfil?id=${obtenerIdOtroUsuario()}`)}
                 >
                   Ver Perfil
                 </Button>
@@ -127,14 +137,14 @@ export default function MensajesTemplate({ chats = [], activeChat, mensajes = []
 
               <div className={styles.messagesContainer}>
                 {mensajes.length === 0 ? (
-                  <div className={styles.emptyMessages}>Comienza la conversación enviando un mensaje.</div>
+                  <div className={styles.emptyMessages}>No hay mensajes en los últimos 2 días.</div>
                 ) : (
                   mensajes.map(msg => {
-                    const isOwn = msg.remitenteId === currentUser?.uid || msg.senderId === currentUser?.uid;
+                    const esPropio = msg.remitenteId === currentUser?.uid || msg.senderId === currentUser?.uid;
                     return (
                       <div 
                         key={msg.id} 
-                        className={`${styles.messageWrapper} ${isOwn ? styles.messageOwn : styles.messageOther}`}
+                        className={`${styles.messageWrapper} ${esPropio ? styles.messageOwn : styles.messageOther}`}
                       >
                         <div className={styles.messageBubble}>
                           <p>{msg.texto}</p>
@@ -143,6 +153,7 @@ export default function MensajesTemplate({ chats = [], activeChat, mensajes = []
                     );
                   })
                 )}
+                <div ref={mensajesEndRef} />
               </div>
 
               <form className={styles.inputForm} onSubmit={handleSend}>

@@ -2,6 +2,10 @@
   max-width: 1200px;
   margin: 0px auto;
   padding: 40px 20px;
+
+  @media (max-width: 768px) {
+    padding: 20px 16px;
+  }
 }
 
 .header {
@@ -9,6 +13,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
 }
 
 .headerTop {
@@ -18,18 +29,31 @@
     color: #0f172a;
     margin: 0px;
     letter-spacing: -0.5px;
+
+    @media (max-width: 768px) {
+      font-size: 24px;
+    }
   }
 }
 
 .actions {
   display: flex;
   gap: 12px;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 }
 
 .actionBtn {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
+
+  @media (max-width: 768px) {
+    flex: 1;
+  }
 }
 
 .layout {
@@ -37,6 +61,11 @@
   grid-template-columns: 1fr 380px;
   gap: 40px;
   align-items: start;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
 }
 
 .columnHeader {
@@ -65,6 +94,11 @@
   display: flex;
   flex-direction: column;
   max-height: calc(100vh - 120px);
+
+  @media (max-width: 900px) {
+    position: static;
+    max-height: none;
+  }
 }
 
 .ticketList {
@@ -74,6 +108,11 @@
   overflow-y: auto;
   padding-right: 12px;
   padding-bottom: 20px;
+
+  @media (max-width: 900px) {
+    padding-right: 0px;
+    overflow-y: visible;
+  }
 
   &::-webkit-scrollbar {
     width: 6px;
@@ -87,16 +126,6 @@
   }
   &::-webkit-scrollbar-thumb:hover {
     background-color: #94a3b8;
-  }
-}
-
-@media (max-width: 900px) {
-  .layout {
-    grid-template-columns: 1fr;
-  }
-  .sideColumn {
-    position: static !important;
-    max-height: 500px;
   }
 }
 

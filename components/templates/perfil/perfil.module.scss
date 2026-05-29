@@ -2,6 +2,10 @@
   max-width: 900px;
   margin: 0px auto;
   padding: 40px 20px 80px 20px;
+
+  @media (max-width: 768px) {
+    padding: 20px 16px 60px 16px;
+  }
 }
 
 .coverPhoto {
@@ -10,6 +14,11 @@
   border-radius: 24px;
   position: relative;
   overflow: hidden;
+
+  @media (max-width: 768px) {
+    height: 120px;
+    border-radius: 16px;
+  }
 }
 
 .coverGradient {
@@ -28,6 +37,12 @@
   position: relative;
   z-index: 10;
   box-shadow: 0px 10px 30px rgba(15, 23, 42, 0.04);
+
+  @media (max-width: 768px) {
+    padding: 16px;
+    margin-top: -40px;
+    border-radius: 16px;
+  }
 }
 
 .header {
@@ -35,6 +50,12 @@
   justify-content: space-between;
   align-items: flex-end;
   margin-bottom: 20px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
 }
 
 .avatarWrapper {
@@ -45,6 +66,12 @@
   background: #f1f5f9;
   overflow: hidden;
   box-shadow: 0px 4px 12px rgba(15, 23, 42, 0.08);
+
+  @media (max-width: 768px) {
+    width: 80px;
+    height: 80px;
+    border-width: 3px;
+  }
 }
 
 .avatarImage {
@@ -65,6 +92,10 @@
 .actionButtons {
   display: flex;
   gap: 12px;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 }
 
 .iconBtn {
@@ -80,12 +111,17 @@
 .actionBtn {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   height: 42px;
   padding: 0px 20px;
   border-radius: 12px;
   font-size: 14px;
   font-weight: 700;
+
+  @media (max-width: 768px) {
+    flex: 1;
+  }
 }
 
 .infoSection {
@@ -102,6 +138,10 @@
   color: #0f172a;
   margin: 0px 0px 2px 0px;
   letter-spacing: -0.5px;
+
+  @media (max-width: 768px) {
+    font-size: 22px;
+  }
 }
 
 .username {
@@ -159,6 +199,11 @@
   border: 1px solid #f1f5f9;
   border-radius: 16px;
   padding: 16px;
+
+  @media (max-width: 768px) {
+    padding: 12px;
+    border-radius: 12px;
+  }
 }
 
 .statBox {
@@ -174,6 +219,10 @@
   font-weight: 800;
   color: #0f172a;
   margin-bottom: 2px;
+
+  @media (max-width: 768px) {
+    font-size: 18px;
+  }
 }
 
 .statLabel {
@@ -182,6 +231,10 @@
   color: #64748b;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+
+  @media (max-width: 768px) {
+    font-size: 10px;
+  }
 }
 
 .statDivider {
@@ -196,6 +249,10 @@
   border: 1px solid #e2e8f0;
   border-radius: 20px;
   overflow: hidden;
+
+  @media (max-width: 768px) {
+    border-radius: 16px;
+  }
 }
 
 .tabs {
@@ -204,6 +261,15 @@
   border-bottom: 1px solid #e2e8f0;
   padding: 6px;
   gap: 6px;
+
+  @media (max-width: 768px) {
+    overflow-x: auto;
+    padding: 4px;
+    
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
 }
 
 .tab {
@@ -221,6 +287,12 @@
   cursor: pointer;
   border-radius: 10px;
   transition: all 0.2s;
+  white-space: nowrap;
+
+  @media (max-width: 768px) {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
 
   &:hover {
     color: #0f172a;
@@ -239,6 +311,10 @@
 
 .tabContent {
   padding: 20px;
+
+  @media (max-width: 768px) {
+    padding: 16px;
+  }
 }
 
 .activityList {
@@ -255,6 +331,11 @@
   background: #f8fafc;
   border-radius: 14px;
   border: 1px solid #f1f5f9;
+
+  @media (max-width: 768px) {
+    padding: 12px;
+    gap: 12px;
+  }
 }
 
 .activityIcon {
@@ -266,10 +347,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .activityInfo {
   flex: 1;
+  min-width: 0;
 }
 
 .activityHeader {
@@ -283,6 +366,13 @@
     font-size: 15px;
     font-weight: 800;
     color: #0f172a;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    @media (max-width: 768px) {
+      font-size: 14px;
+    }
   }
 }
 
@@ -293,12 +383,16 @@
   background: #0f172a;
   color: #ffffff;
   border-radius: 6px;
+  flex-shrink: 0;
 }
 
 .activityMeta {
   font-size: 13px;
   color: #64748b;
   font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .emptyState {
@@ -330,11 +424,10 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
-}
 
-@media (max-width: 700px) {
-  .postsGrid {
+  @media (max-width: 700px) {
     grid-template-columns: 1fr;
+    gap: 16px;
   }
 }
 
@@ -430,10 +523,8 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
-}
 
-@media (max-width: 600px) {
-  .formRow {
+  @media (max-width: 600px) {
     grid-template-columns: 1fr;
   }
 }
@@ -480,11 +571,16 @@
   background: #f1f5f9;
   border-radius: 12px;
   margin-top: 8px;
+
+  @media (max-width: 768px) {
+    padding: 12px;
+  }
 }
 
 .toggleText {
   display: flex;
   flex-direction: column;
+  padding-right: 12px;
 }
 
 .toggleTitle {
@@ -503,6 +599,7 @@
   display: inline-block;
   width: 44px;
   height: 24px;
+  flex-shrink: 0;
 
   input { opacity: 0; width: 0; height: 0; }
 }

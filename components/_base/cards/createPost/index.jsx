@@ -1,131 +1,89 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { Image as ImageIcon, Video, X, Send } from 'lucide-react';
+import { ImagePlus, X, Loader2 } from 'lucide-react';
+import { useStorage } from '@/hooks/useStorage';
 import Button from '@/components/_base/ui/button';
-import { usePosts } from '@/hooks/usePosts';
 import styles from './createPost.module.scss';
 
-export default function CreatePost({ rocodromoId, rocodromoNombre, currentUser }) {
+export default function CreatePost({ user, onSubmit }) {
   const [texto, setTexto] = useState('');
-  const [file, setFile] = useState(null);
+  const [archivo, setArchivo] = useState(null);
   const [preview, setPreview] = useState(null);
+  const [publicando, setPublicando] = useState(false);
   const fileInputRef = useRef(null);
-  const { createPost, submitting, progress } = usePosts();
+  const { uploadFile } = useStorage();
 
-  const handleFileChange = (e) => {
-    const selected = e.target.files[0];
-    if (!selected) return;
-
-    setFile(selected);
-    const objectUrl = URL.createObjectURL(selected);
-    setPreview({ 
-      url: objectUrl, 
-      type: selected.type.startsWith('video/') ? 'video' : 'image' 
-    });
+  const handleFileSelect = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setArchivo(file);
+      setPreview(URL.createObjectURL(file));
+    }
   };
 
-  const clearFile = () => {
-    setFile(null);
+  const handleRemoveFile = () => {
+    setArchivo(null);
     setPreview(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!texto.trim() && !file) return;
+    if (!texto.trim() && !archivo) return;
+    
+    setPublicando(true);
+    let mediaUrl = null;
 
-    await createPost(
-      currentUser,
-      texto,
-      rocodromoId,
-      rocodromoNombre,
-      file
-    );
+    try {
+      if (archivo) {
+        const extension = archivo.name.split('.').pop();
+        const fileName = `post_${Date.now()}.${extension}`;
+        mediaUrl = await uploadFile(archivo, `posts/${user.uid}`, fileName);
+      }
 
-    setTexto('');
-    clearFile();
+      await onSubmit({
+        texto,
+        mediaUrl,
+        mediaType: archivo ? 'image' : null
+      });
+
+      setTexto('');
+      handleRemoveFile();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setPublicando(false);
+    }
   };
 
-  if (!currentUser) {
-    return (
-      <div className={styles.loginPrompt}>
-        Inicia sesión para publicar en la comunidad.
-      </div>
-    );
-  }
-
   return (
-    <form className={styles.createPostForm} onSubmit={handleSubmit}>
-      <div className={styles.inputArea}>
-        {currentUser.fotoPerfil ? (
-          <img src={currentUser.fotoPerfil} alt="Mi perfil" className={styles.avatar} />
-        ) : (
-          <div className={styles.avatarPlaceholder}>
-            {currentUser.nombre?.charAt(0) || 'E'}
+    <div className={styles.createPostCard}>
+      <form onSubmit={handleSubmit}>
+        <textarea 
+          placeholder="¿Qué tal el entreno de hoy?" 
+          value={texto} 
+          onChange={(e) => setTexto(e.target.value)}
+          className={styles.textarea}
+        />
+        
+        {preview && (
+          <div className={styles.previewContainer}>
+            <button type="button" onClick={handleRemoveFile} className={styles.removeBtn}><X size={16} /></button>
+            <img src={preview} alt="Vista previa" className={styles.previewImg} />
           </div>
         )}
-        <textarea 
-          placeholder="¿Qué has encadenado hoy?"
-          value={texto}
-          onChange={(e) => setTexto(e.target.value)}
-          disabled={submitting}
-        />
-      </div>
 
-      {preview && (
-        <div className={styles.previewContainer}>
-          <button type="button" className={styles.removeMediaBtn} onClick={clearFile} disabled={submitting}>
-            <X size={16} />
+        <div className={styles.actions}>
+          <input type="file" ref={fileInputRef} onChange={handleFileSelect} accept="image/*" style={{ display: 'none' }} />
+          <button type="button" className={styles.iconBtn} onClick={() => fileInputRef.current?.click()}>
+            <ImagePlus size={20} />
           </button>
-          {preview.type === 'image' ? (
-            <img src={preview.url} alt="Previsualización" className={styles.mediaPreview} />
-          ) : (
-            <video src={preview.url} className={styles.mediaPreview} controls />
-          )}
+          <Button variant="primary" type="submit" disabled={publicando || (!texto.trim() && !archivo)}>
+            {publicando ? <Loader2 size={18} className={styles.spinner} /> : 'Publicar'}
+          </Button>
         </div>
-      )}
-
-      {submitting && progress > 0 && (
-        <div className={styles.progressContainer}>
-          <div className={styles.progressBar} style={{ width: `${progress}%` }}></div>
-        </div>
-      )}
-
-      <div className={styles.actions}>
-        <div className={styles.mediaButtons}>
-          <label className={`${styles.iconBtn} ${submitting ? styles.disabled : ''}`}>
-            <ImageIcon size={20} />
-            <input 
-              type="file" 
-              accept="image/*" 
-              onChange={handleFileChange} 
-              ref={fileInputRef} 
-              disabled={submitting} 
-              hidden 
-            />
-          </label>
-          <label className={`${styles.iconBtn} ${submitting ? styles.disabled : ''}`}>
-            <Video size={20} />
-            <input 
-              type="file" 
-              accept="video/*" 
-              onChange={handleFileChange} 
-              disabled={submitting} 
-              hidden 
-            />
-          </label>
-        </div>
-        
-        <Button 
-          type="submit" 
-          variant="primary" 
-          disabled={submitting || (!texto.trim() && !file)}
-          className={styles.submitBtn}
-        >
-          {submitting ? 'Publicando...' : <><Send size={16} /> Publicar</>}
-        </Button>
-      </div>
-    </form>
+      </form>
+    </div>
   );
 }

@@ -1,35 +1,26 @@
 import { useState } from 'react';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from '@/lib/firebase';
 
 export function useStorage() {
-  const [progreso, setProgreso] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState(null);
 
-  const subirArchivo = async (archivo, ruta) => {
-    return new Promise((resolve, reject) => {
-      const storageRef = ref(storage, ruta);
-      const uploadTask = uploadBytesResumable(storageRef, archivo);
-
-      uploadTask.on(
-        'state_changed',
-        (snapshot) => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setProgreso(progress);
-        },
-        (err) => {
-          setError(err);
-          reject(err);
-        },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            resolve(downloadURL);
-            setProgreso(0);
-          });
-        }
-      );
-    });
+  const uploadFile = async (file, folderPath, fileName) => {
+    setIsUploading(true);
+    setError(null);
+    try {
+      const storageRef = ref(storage, `${folderPath}/${fileName}`);
+      await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(storageRef);
+      setIsUploading(false);
+      return url;
+    } catch (err) {
+      setError(err);
+      setIsUploading(false);
+      throw err;
+    }
   };
 
-  return { subirArchivo, progreso, error };
+  return { uploadFile, isUploading, error };
 }

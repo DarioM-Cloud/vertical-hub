@@ -16,9 +16,9 @@ export function usePartnerCheck() {
       const data = snapshot.docs
         .map(doc => ({ id: doc.id, ...doc.data() }))
         .filter(ticket => {
-          if (!ticket.fecha) return true; // Mantiene las peticiones que se están subiendo en este instante
+          if (!ticket.fecha) return true;
           const ticketTime = ticket.fecha.toDate().getTime();
-          return (now - ticketTime) <= tenHoursInMs; // Filtra las peticiones de más de 10 horas
+          return (now - ticketTime) <= tenHoursInMs;
         });
 
       setTickets(data);
@@ -28,14 +28,17 @@ export function usePartnerCheck() {
     return () => unsubscribe();
   }, []);
 
-  const addTicket = async (user, rocodromoId, rocodromoNombre, mensaje) => {
-    if (!user || !rocodromoId || !mensaje.trim()) return;
+  const addTicket = async (user, rocodromoId, rocodromoNombre, nivel, franja, modalidad, mensaje) => {
+    if (!user || !rocodromoId) return;
     await addDoc(collection(db, 'partnerTickets'), {
       autorId: user.uid,
       autorNombre: user.displayName || user.nombre || 'Atleta',
       autorFoto: user.photoURL || user.fotoPerfil || '',
       rocodromoId,
       rocodromoNombre,
+      nivel,
+      franja,
+      modalidad,
       mensaje,
       interesados: [],
       fecha: serverTimestamp()

@@ -1,15 +1,18 @@
 'use client';
 
-import { useState } from 'react';
-import { User, Settings, MapPin, Activity, Award, Calendar, Share2, TrendingUp, Lock, Globe, Camera, Hash, Building2, Trash2 } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { User, Settings, MapPin, Activity, Award, Calendar, Share2, TrendingUp, Lock, Globe, Camera, Hash, Building2, Trash2, Loader2, ImagePlus } from 'lucide-react';
 import Container from '@/components/_base/layout/container';
 import Button from '@/components/_base/ui/button';
 import Modal from '@/components/_base/ui/modal';
+import { useStorage } from '@/hooks/useStorage';
 import styles from '../perfil.module.scss';
 
 export default function OwnProfileView({ profile, logbook, posts, onUpdateProfile, onDeletePost }) {
   const [activeTab, setActiveTab] = useState('actividad');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const fileInputRef = useRef(null);
+  const { uploadFile, isUploading } = useStorage();
 
   const [formData, setFormData] = useState({
     nombre: profile?.nombre || '',
@@ -33,6 +36,21 @@ export default function OwnProfileView({ profile, logbook, posts, onUpdateProfil
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+      const extension = file.name.split('.').pop();
+      const fileName = `avatar_${Date.now()}.${extension}`;
+      const url = await uploadFile(file, `usuarios/${profile.id || 'temp'}`, fileName);
+      
+      setFormData(prev => ({ ...prev, fotoPerfil: url }));
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleSave = async () => {
@@ -203,22 +221,33 @@ export default function OwnProfileView({ profile, logbook, posts, onUpdateProfil
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Editar Perfil">
         <div className={styles.editForm}>
+          
+          <div className={styles.avatarUploadSection} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+            <div className={styles.avatarWrapper} style={{ width: '80px', height: '80px', margin: '0' }}>
+              {formData.fotoPerfil ? (
+                <img src={formData.fotoPerfil} alt="Preview" className={styles.avatarImage} />
+              ) : (
+                <div className={styles.avatarPlaceholder}><User size={30} /></div>
+              )}
+            </div>
+            <input type="file" ref={fileInputRef} onChange={handleImageUpload} accept="image/*" style={{ display: 'none' }} />
+            <Button variant="outline" onClick={() => fileInputRef.current?.click()} disabled={isUploading} style={{ padding: '8px 16px', fontSize: '13px' }}>
+              {isUploading ? <Loader2 size={16} className={styles.spinner} /> : <><ImagePlus size={16} style={{ marginRight: '6px' }} /> Cambiar Foto</>}
+            </Button>
+          </div>
+
           <div className={styles.formRow}>
             <div className={styles.inputGroup}>
               <label><User size={14} /> Nombre</label>
               <input type="text" name="nombre" value={formData.nombre} onChange={handleInputChange} />
             </div>
             <div className={styles.inputGroup}>
-              <label><Camera size={14} /> URL Foto</label>
-              <input type="text" name="fotoPerfil" value={formData.fotoPerfil} onChange={handleInputChange} />
+              <label><MapPin size={14} /> Ubicación</label>
+              <input type="text" name="ubicacion" value={formData.ubicacion} onChange={handleInputChange} placeholder="Ej: Burgos, España" />
             </div>
           </div>
 
           <div className={styles.formRow}>
-            <div className={styles.inputGroup}>
-              <label><MapPin size={14} /> Ubicación</label>
-              <input type="text" name="ubicacion" value={formData.ubicacion} onChange={handleInputChange} placeholder="Ej: Burgos, España" />
-            </div>
             <div className={styles.inputGroup}>
               <label><Activity size={14} /> Grado Actual</label>
               <select name="nivelEscalada" value={formData.nivelEscalada} onChange={handleInputChange}>
@@ -228,9 +257,6 @@ export default function OwnProfileView({ profile, logbook, posts, onUpdateProfil
                 <option value="8a">8a</option>
               </select>
             </div>
-          </div>
-
-          <div className={styles.formRow}>
             <div className={styles.inputGroup}>
               <label><Hash size={14} /> Modalidad Favorita</label>
               <select name="modalidadFavorita" value={formData.modalidadFavorita} onChange={handleInputChange}>
@@ -239,10 +265,11 @@ export default function OwnProfileView({ profile, logbook, posts, onUpdateProfil
                 <option value="velocidad">Velocidad</option>
               </select>
             </div>
-            <div className={styles.inputGroup}>
-              <label><Building2 size={14} /> Rocódromo Habitual</label>
-              <input type="text" name="rocodromoHabitual" value={formData.rocodromoHabitual} onChange={handleInputChange} placeholder="Ej: Skala" />
-            </div>
+          </div>
+
+          <div className={styles.inputGroup}>
+            <label><Building2 size={14} /> Rocódromo Habitual</label>
+            <input type="text" name="rocodromoHabitual" value={formData.rocodromoHabitual} onChange={handleInputChange} placeholder="Ej: Skala" />
           </div>
 
           <div className={styles.inputGroup}>
@@ -261,7 +288,7 @@ export default function OwnProfileView({ profile, logbook, posts, onUpdateProfil
             </label>
           </div>
 
-          <Button variant="primary" onClick={handleSave} disabled={submitting} style={{ width: '100%', marginTop: '12px' }}>
+          <Button variant="primary" onClick={handleSave} disabled={submitting || isUploading} style={{ width: '100%', marginTop: '12px' }}>
             {submitting ? 'Guardando...' : 'Guardar Cambios'}
           </Button>
         </div>

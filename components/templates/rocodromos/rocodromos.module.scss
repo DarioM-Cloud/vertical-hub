@@ -5,6 +5,11 @@
 .searchWrapper {
   max-width: 500px;
   margin-top: 20px;
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+    margin-top: 16px;
+  }
 }
 
 .filters {
@@ -15,12 +20,22 @@
 .tags {
   display: flex;
   gap: 12px;
+
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
   gap: 32px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
 }
 
 .empty {

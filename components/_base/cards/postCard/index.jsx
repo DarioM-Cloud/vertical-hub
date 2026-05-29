@@ -27,8 +27,7 @@ export default function PostCard({ data }) {
 
   const hasLiked = data.likedBy?.includes(user?.uid);
   const comentarios = data.comentariosLista || [];
-  
-  // Ahora comprobamos si el que navega es el dueño del post para dejarle borrarlo desde aquí
+
   const isOwner = user && (user.uid === data.autorId || user.uid === data.userId);
 
   const handleLike = async () => {

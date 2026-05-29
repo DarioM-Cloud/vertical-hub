@@ -1,26 +1,30 @@
 'use client';
 
-import { useParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { useChat } from '@/hooks/useChat';
-import ChatDetailTemplate from '@/components/templates/chatDetail';
 import Loader from '@/components/_base/ui/loader';
+import ChatDetailTemplate from '@/components/templates/chatDetail';
 
 export default function ChatDetailPage() {
-  const { id } = useParams();
+  const searchParams = useSearchParams();
+  const id = searchParams.get('id');
   const { user } = useAuth();
-  
-  const targetUserUid = id.split('_').find(uid => uid !== user?.uid);
-  const { mensajes, loading, otherUser, enviarMensaje } = useChat(user?.uid, targetUserUid);
+
+  if (!id) return <Loader />;
+
+  const idUsuarioDestino = id.split('_').find(uid => uid !== user?.uid);
+  const { mensajes, loading, otherUser, enviarMensaje } = useChat(user?.uid, idUsuarioDestino);
 
   if (loading) return <Loader />;
 
   return (
-    <ChatDetailTemplate
-      mensajes={mensajes}
-      currentUserId={user?.uid}
-      otherUserName={otherUser?.nombre || otherUser?.displayName}
-      onSendMessage={enviarMensaje}
+    <ChatDetailTemplate 
+      mensajes={mensajes} 
+      currentUserId={user?.uid} 
+      otroUsuarioId={idUsuarioDestino}
+      otherUserName={otherUser?.nombre} 
+      onSendMessage={enviarMensaje} 
     />
   );
 }

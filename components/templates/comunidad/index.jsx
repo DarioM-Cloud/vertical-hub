@@ -22,8 +22,13 @@ export default function ComunidadTemplate({
   const [preview, setPreview] = useState(null);
   const fileInputRef = useRef(null);
 
-  const [partnerText, setPartnerText] = useState('');
-  const [selectedTicketRocoId, setSelectedTicketRocoId] = useState('');
+  const [partnerData, setPartnerData] = useState({
+    rocodromoId: '',
+    nivel: '',
+    franja: '',
+    modalidad: '',
+    mensaje: ''
+  });
   const [submitting, setSubmitting] = useState(false);
 
   const handleFileChange = (e) => {
@@ -58,15 +63,29 @@ export default function ComunidadTemplate({
     setIsPostModalOpen(false);
   };
 
+  const handlePartnerInputChange = (e) => {
+    const { name, value } = e.target;
+    setPartnerData(prev => ({ ...prev, [name]: value }));
+  };
+
   const handlePublishTicket = async () => {
     if (!currentUser) return alert('Debes iniciar sesión');
-    if (!selectedTicketRocoId) return alert('Selecciona un rocódromo');
-    const rocoData = rocodromos.find(r => r.id === selectedTicketRocoId);
+    if (!partnerData.rocodromoId) return alert('Selecciona un rocódromo');
+    
+    const rocoData = rocodromos.find(r => r.id === partnerData.rocodromoId);
     
     setSubmitting(true);
-    await onAddTicket(currentUser, selectedTicketRocoId, rocoData.nombre, partnerText);
-    setPartnerText('');
-    setSelectedTicketRocoId('');
+    await onAddTicket(
+      currentUser, 
+      partnerData.rocodromoId, 
+      rocoData.nombre, 
+      partnerData.nivel,
+      partnerData.franja,
+      partnerData.modalidad,
+      partnerData.mensaje
+    );
+    
+    setPartnerData({ rocodromoId: '', nivel: '', franja: '', modalidad: '', mensaje: '' });
     setSubmitting(false);
     setIsPartnerModalOpen(false);
   };
@@ -182,28 +201,71 @@ export default function ComunidadTemplate({
 
       <Modal isOpen={isPartnerModalOpen} onClose={() => setIsPartnerModalOpen(false)} title="Buscar Compañero">
         <div className={styles.modalForm}>
-          <select 
-            className={styles.selectInput}
-            value={selectedTicketRocoId}
-            onChange={(e) => setSelectedTicketRocoId(e.target.value)}
-          >
-            <option value="">Selecciona un rocódromo...</option>
-            {rocodromos.map(r => (
-              <option key={r.id} value={r.id}>{r.nombre}</option>
-            ))}
-          </select>
-          <textarea 
-            className={styles.textarea} 
-            placeholder="Escribe tu nivel, disponibilidad, qué modalidad quieres practicar..." 
-            value={partnerText}
-            onChange={(e) => setPartnerText(e.target.value)}
-            rows={4}
-          />
+          <div className={styles.formGroup}>
+            <label>Rocódromo</label>
+            <select 
+              className={styles.selectInput}
+              name="rocodromoId"
+              value={partnerData.rocodromoId}
+              onChange={handlePartnerInputChange}
+            >
+              <option value="">Selecciona un rocódromo...</option>
+              {rocodromos.map(r => (
+                <option key={r.id} value={r.id}>{r.nombre}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className={styles.row}>
+            <div className={styles.formGroup}>
+              <label>Nivel</label>
+              <select className={styles.selectInput} name="nivel" value={partnerData.nivel} onChange={handlePartnerInputChange}>
+                <option value="">Selecciona...</option>
+                <option value="Iniciación (V - 6a)">Iniciación (V - 6a)</option>
+                <option value="Intermedio (6a+ - 6c+)">Intermedio (6a+ - 6c+)</option>
+                <option value="Avanzado (7a - 7c+)">Avanzado (7a - 7c+)</option>
+                <option value="Experto (8a o más)">Experto (8a o más)</option>
+              </select>
+            </div>
+            <div className={styles.formGroup}>
+              <label>Modalidad</label>
+              <select className={styles.selectInput} name="modalidad" value={partnerData.modalidad} onChange={handlePartnerInputChange}>
+                <option value="">Selecciona...</option>
+                <option value="Boulder">Boulder</option>
+                <option value="Vías (Cuerda)">Vías (Cuerda)</option>
+                <option value="Ambos">Ambos</option>
+              </select>
+            </div>
+          </div>
+
+          <div className={styles.formGroup}>
+            <label>Franja Horaria (2-3 horas)</label>
+            <select className={styles.selectInput} name="franja" value={partnerData.franja} onChange={handlePartnerInputChange}>
+              <option value="">Selecciona...</option>
+              <option value="Mañana (10:00 - 13:00)">Mañana (10:00 - 13:00)</option>
+              <option value="Mediodía (13:00 - 16:00)">Mediodía (13:00 - 16:00)</option>
+              <option value="Tarde (16:00 - 19:00)">Tarde (16:00 - 19:00)</option>
+              <option value="Noche (19:00 - 22:00)">Noche (19:00 - 22:00)</option>
+            </select>
+          </div>
+
+          <div className={styles.formGroup}>
+            <label>Mensaje adicional (Opcional)</label>
+            <textarea 
+              className={styles.textarea} 
+              name="mensaje"
+              placeholder="Ej: Llevo cuerda de 70m y grigri..." 
+              value={partnerData.mensaje}
+              onChange={handlePartnerInputChange}
+              rows={3}
+            />
+          </div>
+
           <Button 
             variant="primary" 
-            style={{ width: '100%' }}
+            style={{ width: '100%', marginTop: '8px' }}
             onClick={handlePublishTicket}
-            disabled={!partnerText.trim() || !selectedTicketRocoId || submitting}
+            disabled={!partnerData.rocodromoId || !partnerData.nivel || !partnerData.modalidad || !partnerData.franja || submitting}
           >
             {submitting ? 'Publicando...' : 'Fijar en el Tablón'}
           </Button>

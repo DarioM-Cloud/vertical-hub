@@ -18,7 +18,10 @@
 
 .imagePlaceholder {
   height: 160px;
-  background: url('https://images.unsplash.com/photo-1522163182402-834f871fd851?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80') center/cover;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-color: #e2e8f0;
   position: relative;
   display: flex;
   align-items: flex-end;

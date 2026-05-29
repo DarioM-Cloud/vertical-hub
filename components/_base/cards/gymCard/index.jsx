@@ -9,9 +9,14 @@ export default function GymCard({ data, activeTickets = [] }) {
   if (occupancyPercentage > 50) occupancyColor = '#f59e0b';
   if (occupancyPercentage > 85) occupancyColor = '#ef4444';
 
+  const backgroundImageUrl = data.imagenUrl || 'https://images.unsplash.com/photo-1522163182402-834f871fd851?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
+
   return (
     <Link href={`/rocodromos/${data.id}`} className={styles.card}>
-      <div className={styles.imagePlaceholder}>
+      <div 
+        className={styles.imagePlaceholder}
+        style={{ backgroundImage: `url(${backgroundImageUrl})` }}
+      >
         <div className={styles.gradient}></div>
         <h3 className={styles.name}>{data.nombre}</h3>
       </div>
@@ -25,7 +30,7 @@ export default function GymCard({ data, activeTickets = [] }) {
           <div className={styles.occupancyHeader}>
             <div className={styles.occupancyLabel}>
               <Users size={16} />
-              <span>Aforo en vivo</span>
+              <span>Aforo en tiempo real:</span>
             </div>
             <span className={styles.occupancyText} style={{ color: occupancyColor }}>
               {data.aforoActual} / {data.aforoMaximo}

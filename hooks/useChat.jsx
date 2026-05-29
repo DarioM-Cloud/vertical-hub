@@ -10,7 +10,8 @@ import {
   doc,
   getDoc,
   setDoc,
-  updateDoc
+  updateDoc,
+  where
 } from 'firebase/firestore';
 
 export function useChat(currentUserUid, targetUserUid) {
@@ -51,8 +52,15 @@ export function useChat(currentUserUid, targetUserUid) {
   useEffect(() => {
     if (!chatId) return;
 
+    const dosDiasAtras = new Date();
+    dosDiasAtras.setDate(dosDiasAtras.getDate() - 2);
+
     const mensajesRef = collection(db, 'chats', chatId, 'mensajes');
-    const q = query(mensajesRef, orderBy('fecha', 'asc'));
+    const q = query(
+      mensajesRef,
+      where('fecha', '>=', dosDiasAtras),
+      orderBy('fecha', 'asc')
+    );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const msgs = snapshot.docs.map(doc => ({

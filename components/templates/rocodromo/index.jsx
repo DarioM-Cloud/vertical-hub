@@ -8,7 +8,6 @@ import OccupancyCard from '@/components/_base/cards/occupancyCard';
 import TablonAvisos from '@/components/_base/tablonAvisos';
 import ListadoVias from '@/components/_base/listadoVias';
 import ModalAscension from '@/components/_base/ui/modalAscension';
-import CreatePost from '@/components/_base/cards/createPost';
 import styles from './rocodromo.module.scss';
 
 export default function RocodromoTemplate({ rocodromo, posts, avisos, vias, sectores, currentUser, onAddAscension, submittingAscension }) {
@@ -44,7 +43,10 @@ export default function RocodromoTemplate({ rocodromo, posts, avisos, vias, sect
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.hero}>
+      <div 
+        className={styles.hero}
+        style={{ backgroundImage: `url(${rocodromo?.imagenUrl || 'https://images.unsplash.com/photo-1522163182402-834f871fd851?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'})` }}
+      >
         <div className={styles.heroOverlay}></div>
         <Container className={styles.heroContent}>
           <h1>{rocodromo.nombre}</h1>
@@ -115,12 +117,6 @@ export default function RocodromoTemplate({ rocodromo, posts, avisos, vias, sect
               <h2>Comunidad local</h2>
             </div>
             
-            <CreatePost 
-              rocodromoId={rocodromo.id} 
-              rocodromoNombre={rocodromo.nombre} 
-              currentUser={currentUser} 
-            />
-
             <div className={styles.postsList}>
               {posts?.length === 0 ? (
                 <div className={styles.emptyPosts}>Nadie ha publicado nada sobre este rocódromo todavía.</div>

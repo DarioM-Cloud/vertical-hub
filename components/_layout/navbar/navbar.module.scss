@@ -25,12 +25,20 @@
   color: #0f172a;
   text-decoration: none;
   letter-spacing: -0.5px;
+  
+  span {
+    color: #3b82f6;
+  }
 }
 
-.links {
+.desktopLinks {
   display: flex;
   align-items: center;
   gap: 24px;
+
+  @include mobile {
+    display: none;
+  }
 }
 
 .navLink {
@@ -39,10 +47,8 @@
   color: #475569;
   text-decoration: none;
   transition: color 0.2s;
-  display: flex;
-  align-items: center;
 
-  &:hover {
+  &:hover, &.active {
     color: #0f172a;
   }
 }
@@ -50,10 +56,131 @@
 .actions {
   display: flex;
   align-items: center;
+  gap: 16px;
+}
+
+.desktopAuth {
+  display: flex;
+  align-items: center;
+
+  @include mobile {
+    display: none;
+  }
 }
 
 .menuBtn {
+  background: transparent;
+  border: none;
   padding: 8px;
   color: #0f172a;
   cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+
+  @include mobile {
+    display: flex;
+  }
+}
+
+.profileTrigger {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.avatarMini {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  overflow: hidden;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.mobileMenu {
+  position: fixed;
+  top: 70px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ffffff;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  transform: translateY(-100%);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+
+  @media (min-width: 768px) {
+    display: none !important;
+  }
+}
+
+.mobileMenuOpen {
+  transform: translateY(0);
+  opacity: 1;
+  visibility: visible;
+}
+
+.mobileLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.mobileNavLink {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+  text-decoration: none;
+  padding: 8px 0;
+}
+
+.mobileAuthDivider {
+  height: 1px;
+  background-color: #e2e8f0;
+  margin: 32px 0;
+}
+
+.mobileAuth {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.mobileProfileBtn {
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+  background: #f8fafc;
+  border-radius: 12px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+
+  span {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0f172a;
+  }
 }

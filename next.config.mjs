@@ -1,11 +1,18 @@
-/** @type {import('next').NextConfig} */
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 const nextConfig = {
-  /* config options here */
-  reactCompiler: true,
-  output: "export",
+  output: 'export',
   images: {
-    unoptimized: true
-  }
+    unoptimized: true,
+  },
+  sassOptions: {
+    includePaths: [path.join(__dirname)],
+    prependData: `@use "@/app/styles/breakpoints.scss" as *;`,
+    silenceDeprecations: ['legacy-js-api', 'import']
+  },
 };
 
 export default nextConfig;
