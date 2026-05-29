@@ -5,20 +5,42 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Send, ArrowLeft, User, Lock } from 'lucide-react';
 import Container from '@/components/_base/layout/container';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 import styles from './chatDetail.module.scss';
 
 export default function ChatDetailTemplate({ mensajes = [], currentUserId, otroUsuarioId, otherUserName, onSendMessage }) {
   const router = useRouter();
   const [nuevoMensaje, setNuevoMensaje] = useState('');
-  const mensajesEndRef = useRef(null);
+  const [otherUserPhoto, setOtherUserPhoto] = useState(null);
+  const messagesContainerRef = useRef(null);
 
   const scrollToBottom = () => {
-    mensajesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
   };
 
   useEffect(() => {
     scrollToBottom();
   }, [mensajes]);
+
+  useEffect(() => {
+    if (!otroUsuarioId) return;
+    const fetchPhoto = async () => {
+      try {
+        const userRef = doc(db, 'usuarios', otroUsuarioId);
+        const userSnap = await getDoc(userRef);
+        if (userSnap.exists()) {
+          const data = userSnap.data();
+          setOtherUserPhoto(data.fotoPerfil || data.photoURL || null);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchPhoto();
+  }, [otroUsuarioId]);
 
   const handleSend = (e) => {
     e.preventDefault();
@@ -35,14 +57,18 @@ export default function ChatDetailTemplate({ mensajes = [], currentUserId, otroU
             <ArrowLeft size={20} />
           </button>
           <Link href={`/perfil?id=${otroUsuarioId}`} className={styles.headerUser} style={{ textDecoration: 'none' }}>
-            <div className={styles.avatarPlaceholder}>
-              <User size={20} />
+            <div className={styles.avatarPlaceholder} style={{ width: '40px', height: '40px', borderRadius: '50%', overflow: 'hidden', background: '#e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              {otherUserPhoto ? (
+                <img src={otherUserPhoto} alt={otherUserName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                <User size={20} color="#64748b" />
+              )}
             </div>
             <span className={styles.headerName}>{otherUserName || 'Atleta'}</span>
           </Link>
         </div>
 
-        <div className={styles.messagesContainer}>
+        <div className={styles.messagesContainer} ref={messagesContainerRef}>
           <div className={styles.encryptionNotice}>
             <Lock size={12} />
             <span>Tus mensajes están cifrados de extremo a extremo.</span>
@@ -70,7 +96,6 @@ export default function ChatDetailTemplate({ mensajes = [], currentUserId, otroU
               );
             })
           )}
-          <div ref={mensajesEndRef} />
         </div>
 
         <form className={styles.inputForm} onSubmit={handleSend}>

@@ -27,6 +27,8 @@ export default function Navbar() {
     { name: 'Mensajería', path: '/mensajes', icon: <MessageSquare size={18} /> }
   ];
 
+  const fotoActual = user?.fotoPerfil || user?.photoURL;
+
   return (
     <>
       <nav className={styles.navbar}>
@@ -55,8 +57,8 @@ export default function Navbar() {
                 user ? (
                   <Link href="/perfil" className={styles.profileTrigger}>
                     <div className={styles.avatarMini}>
-                      {user.photoURL ? (
-                        <img src={user.photoURL} alt={user.displayName || 'Usuario'} />
+                      {fotoActual ? (
+                        <img src={fotoActual} alt={user.displayName || user.nombre || 'Usuario'} />
                       ) : (
                         <User size={20} />
                       )}
@@ -105,13 +107,13 @@ export default function Navbar() {
                 style={{ textDecoration: 'none' }}
               >
                 <div className={styles.avatarMini}>
-                  {user.photoURL ? (
-                    <img src={user.photoURL} alt={user.displayName || 'Usuario'} />
+                  {fotoActual ? (
+                    <img src={fotoActual} alt={user.displayName || user.nombre || 'Usuario'} />
                   ) : (
                     <User size={20} />
                   )}
                 </div>
-                <span>Mi Perfil ({user.displayName || 'Usuario'})</span>
+                <span>Mi Perfil ({user.displayName || user.nombre || 'Usuario'})</span>
               </Link>
             ) : (
               <Link href="/login" style={{ textDecoration: 'none', width: '100%' }} onClick={closeMobileMenu}>

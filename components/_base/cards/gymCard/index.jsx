@@ -1,8 +1,53 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { MapPin, Users, User } from 'lucide-react';
+import { db } from '@/lib/firebase';
+import { doc, getDoc } from 'firebase/firestore';
 import styles from './gymCard.module.scss';
 
+function TicketAvatar({ ticket, index, router }) {
+  const [foto, setFoto] = useState(ticket.autorFoto);
+
+  useEffect(() => {
+    if (!ticket.autorId) return;
+    const fetchPhoto = async () => {
+      try {
+        const userRef = doc(db, 'usuarios', ticket.autorId);
+        const userSnap = await getDoc(userRef);
+        if (userSnap.exists()) {
+          const data = userSnap.data();
+          setFoto(data.fotoPerfil || data.photoURL || ticket.autorFoto);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchPhoto();
+  }, [ticket.autorId, ticket.autorFoto]);
+
+  return (
+    <div 
+      className={styles.avatarBubble} 
+      style={{ zIndex: 10 - index, cursor: 'pointer' }}
+      onClick={(e) => {
+        e.preventDefault();
+        router.push(`/perfil?id=${ticket.autorId}`);
+      }}
+    >
+      {foto ? (
+        <img src={foto} alt="Avatar" />
+      ) : (
+        <User size={14} />
+      )}
+    </div>
+  );
+}
+
 export default function GymCard({ data, activeTickets = [] }) {
+  const router = useRouter();
   const occupancyPercentage = data.aforoMaximo > 0 ? Math.round((data.aforoActual / data.aforoMaximo) * 100) : 0;
   
   let occupancyColor = '#10b981';
@@ -54,13 +99,7 @@ export default function GymCard({ data, activeTickets = [] }) {
           {activeTickets.length > 0 ? (
             <div className={styles.avatarGroup}>
               {activeTickets.slice(0, 4).map((ticket, i) => (
-                <div key={ticket.id} className={styles.avatarBubble} style={{ zIndex: 10 - i }}>
-                  {ticket.autorFoto ? (
-                    <img src={ticket.autorFoto} alt="Avatar" />
-                  ) : (
-                    <User size={14} />
-                  )}
-                </div>
+                <TicketAvatar key={ticket.id} ticket={ticket} index={i} router={router} />
               ))}
               {activeTickets.length > 4 && (
                 <div className={styles.avatarBubbleMore} style={{ zIndex: 0 }}>
