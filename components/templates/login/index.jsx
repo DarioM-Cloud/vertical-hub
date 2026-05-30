@@ -20,6 +20,7 @@ export default function LoginTemplate({ onLogin, error }) {
   };
 
   return (
+    <div className={styles.pageWrapper}>
     <Container className={styles.container}>
       <Section className={styles.formSection}>
         <div className={styles.card}>
@@ -69,5 +70,6 @@ export default function LoginTemplate({ onLogin, error }) {
         </div>
       </Section>
     </Container>
+    </div>
   );
 }

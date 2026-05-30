@@ -1,0 +1,81 @@
+.speedDialContainer {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  z-index: 9999;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.actionBtn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  color: #0f172a;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  position: relative;
+  transition: all 0.2s;
+}
+
+.actionBtn:hover {
+  background-color: #f8fafc;
+  transform: scale(1.05);
+}
+
+.actionBtn:hover .tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0px);
+}
+
+.tooltip {
+  position: absolute;
+  right: calc(100% + 12px);
+  background-color: #0f172a;
+  color: #ffffff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(10px);
+  transition: all 0.2s;
+  pointer-events: none;
+}
+
+.mainBtn {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #3b82f6;
+  color: #ffffff;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0px 6px 16px rgba(59, 130, 246, 0.4);
+  transition: all 0.2s;
+}
+
+.mainBtn:hover {
+  background-color: #2563eb;
+  transform: scale(1.05);
+}

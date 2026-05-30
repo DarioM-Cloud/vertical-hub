@@ -7,6 +7,7 @@ import Section from '@/components/_base/layout/section';
 import GymCard from '@/components/_base/cards/gymCard';
 import GymMap from '@/components/_base/ui/map';
 import FilterBar from '@/components/_base/ui/filterBar';
+import AdminSpeedDial from '@/components/_base/ui/adminSpeedDial';
 import styles from './home.module.scss';
 
 export default function HomeTemplate({ rocodromos = [], tickets = [] }) {
@@ -82,6 +83,8 @@ export default function HomeTemplate({ rocodromos = [], tickets = [] }) {
           </div>
         </Container>
       </Section>
+
+      <AdminSpeedDial />
     </div>
   );
 }

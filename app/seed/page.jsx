@@ -1,110 +1,75 @@
 'use client';
 
 import { useState } from 'react';
-import { db } from '@/lib/firebase';
-import { collection, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
-import Button from '@/components/_base/ui/button';
+import { auth, db } from '@/lib/firebase';
+import { createUserWithEmailAndPassword, signOut } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 import Container from '@/components/_base/layout/container';
-
-const sectoresMap = {
-  "sputnik-las-rozas": 18,
-  "sharma-bcn": 16,
-  "rocopolis": 14,
-  "arkose-madrid": 12,
-  "climbat-madrid": 12,
-  "flashh-bcn": 11,
-  "biwak": 10,
-  "indoorwall-bilbao": 10,
-  "hangar-4": 9,
-  "the-wall-alicante": 9,
-  "beclimb-malaga": 8,
-  "natural-climb": 8,
-  "9a-murcia": 8,
-  "cereza-wall": 7,
-  "soul-climb": 7,
-  "campobase-burgos": 6,
-  "geko-valladolid": 6,
-  "skala-burgos": 5
-};
-
-const zonas = ['Desplome', 'Placa', 'Cueva', 'Proa', 'Diedro', 'Competición'];
-const grados = [
-  'V0', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6', 'V7', 'V8', 'V9', 'V10',
-  'IV', 'V', 'V+', '6a', '6a+', '6b', '6b+', '6c', '6c+', '7a', '7a+', '7b', '7b+', '7c', '7c+', '8a'
-];
-const colores = [
-  { hex: '#ef4444', nombre: 'Rojo' },
-  { hex: '#3b82f6', nombre: 'Azul' },
-  { hex: '#10b981', nombre: 'Verde' },
-  { hex: '#f59e0b', nombre: 'Amarillo' },
-  { hex: '#0f172a', nombre: 'Negro' },
-  { hex: '#ffffff', nombre: 'Blanco' }
-];
+import Button from '@/components/_base/ui/button';
 
 export default function SeedPage() {
-  const [loading, setLoading] = useState(false);
-  const [done, setDone] = useState(false);
+  const [status, setStatus] = useState('Esperando para iniciar la inyección...');
 
-  const handleSeedTodo = async () => {
-    setLoading(true);
-    try {
-      const rocodromosSnap = await getDocs(collection(db, 'rocodromos'));
-      
-      for (const rocoDoc of rocodromosSnap.docs) {
-        const rocoId = rocoDoc.id;
-        const numSectores = sectoresMap[rocoId] || 8;
+  const listaAdmins = [
+    { email: 'superadmin@verticalhub.com', pass: 'superAdmin', rol: 'superadmin', nombre: 'Super Admin', adminRocoId: null },
+    { email: '9a-murciaadmin@verticalhub.com', pass: '9a-murciaAdmin', rol: 'rocoadmin', nombre: '9a Murcia Admin', adminRocoId: '9a-murcia' },
+    { email: 'arkose-madridadmin@verticalhub.com', pass: 'arkose-madridAdmin', rol: 'rocoadmin', nombre: 'Arkose Madrid Admin', adminRocoId: 'arkose-madrid' },
+    { email: 'beclimb-malagaadmin@verticalhub.com', pass: 'beclimb-malagaAdmin', rol: 'rocoadmin', nombre: 'BeClimb Málaga Admin', adminRocoId: 'beclimb-malaga' },
+    { email: 'biwakadmin@verticalhub.com', pass: 'biwakAdmin', rol: 'rocoadmin', nombre: 'Biwak Admin', adminRocoId: 'biwak' },
+    { email: 'campobase-burgosadmin@verticalhub.com', pass: 'campobase-burgosAdmin', rol: 'rocoadmin', nombre: 'Campo Base Burgos Admin', adminRocoId: 'campobase-burgos' },
+    { email: 'cereza-walladmin@verticalhub.com', pass: 'cereza-wallAdmin', rol: 'rocoadmin', nombre: 'Cereza Wall Admin', adminRocoId: 'cereza-wall' },
+    { email: 'climbat-madridadmin@verticalhub.com', pass: 'climbat-madridAdmin', rol: 'rocoadmin', nombre: 'Climbat Madrid Admin', adminRocoId: 'climbat-madrid' },
+    { email: 'flashh-bcnadmin@verticalhub.com', pass: 'flashh-bcnAdmin', rol: 'rocoadmin', nombre: 'Flashh BCN Admin', adminRocoId: 'flashh-bcn' },
+    { email: 'geko-valladolidadmin@verticalhub.com', pass: 'geko-valladolidAdmin', rol: 'rocoadmin', nombre: 'Geko Valladolid Admin', adminRocoId: 'geko-valladolid' },
+    { email: 'hangar-4admin@verticalhub.com', pass: 'hangar-4Admin', rol: 'rocoadmin', nombre: 'Hangar 4 Admin', adminRocoId: 'hangar-4' },
+    { email: 'indoorwall-bilbaoadmin@verticalhub.com', pass: 'indoorwall-bilbaoAdmin', rol: 'rocoadmin', nombre: 'Indoorwall Bilbao Admin', adminRocoId: 'indoorwall-bilbao' },
+    { email: 'natural-climbadmin@verticalhub.com', pass: 'natural-climbAdmin', rol: 'rocoadmin', nombre: 'Natural Climb Admin', adminRocoId: 'natural-climb' },
+    { email: 'rocopolisadmin@verticalhub.com', pass: 'rocopolisAdmin', rol: 'rocoadmin', nombre: 'Rocopolis Admin', adminRocoId: 'rocopolis' },
+    { email: 'sharma-bcnadmin@verticalhub.com', pass: 'sharma-bcnAdmin', rol: 'rocoadmin', nombre: 'Sharma BCN Admin', adminRocoId: 'sharma-bcn' },
+    { email: 'skala-burgosadmin@verticalhub.com', pass: 'skala-burgosAdmin', rol: 'rocoadmin', nombre: 'Skala Burgos Admin', adminRocoId: 'skala-burgos' },
+    { email: 'soul-climbadmin@verticalhub.com', pass: 'soul-climbAdmin', rol: 'rocoadmin', nombre: 'Soul Climb Admin', adminRocoId: 'soul-climb' },
+    { email: 'sputnik-las-rozasadmin@verticalhub.com', pass: 'sputnik-las-rozasAdmin', rol: 'rocoadmin', nombre: 'Sputnik Las Rozas Admin', adminRocoId: 'sputnik-las-rozas' },
+    { email: 'the-wall-alicanteadmin@verticalhub.com', pass: 'the-wall-alicanteAdmin', rol: 'rocoadmin', nombre: 'The Wall Alicante Admin', adminRocoId: 'the-wall-alicante' }
+  ];
 
-        for (let i = 0; i < numSectores; i++) {
-          const isEquipping = Math.random() > 0.8;
-          const nombreSector = `Sector ${String.fromCharCode(65 + i)}`;
-          const viasEnSector = Math.floor(Math.random() * 6) + 4;
+  const procesarInyeccion = async () => {
+    setStatus('Creando credenciales en Firebase Auth y Firestore...');
 
-          await addDoc(collection(db, 'sectores'), {
-            rocodromoId: rocoId,
-            nombre: nombreSector,
-            zona: zonas[Math.floor(Math.random() * zonas.length)],
-            viasCount: viasEnSector,
-            viasNuevas: Math.floor(Math.random() * 3),
-            gradoPredominante: grados[Math.floor(Math.random() * grados.length)],
-            estado: isEquipping ? 'Equipando' : 'Abierto',
-            diasRenovacion: Math.floor(Math.random() * 30) + 1
-          });
-
-          if (!isEquipping) {
-            for (let j = 0; j < viasEnSector; j++) {
-              const colorObj = colores[Math.floor(Math.random() * colores.length)];
-              const grado = grados[Math.floor(Math.random() * grados.length)];
-
-              await addDoc(collection(db, 'vias'), {
-                rocodromoId: rocoId,
-                nombre: `Bloque ${j + 1}`,
-                grado: grado,
-                colorHex: colorObj.hex,
-                colorNombre: colorObj.nombre,
-                sector: nombreSector,
-                fechaCreacion: serverTimestamp()
-              });
-            }
-          }
-        }
+    for (const cuenta of listaAdmins) {
+      try {
+        const respuestaAuth = await createUserWithEmailAndPassword(auth, cuenta.email, cuenta.pass);
+        await setDoc(doc(db, 'usuarios', respuestaAuth.user.uid), {
+          nombre: cuenta.nombre,
+          email: cuenta.email,
+          rol: cuenta.rol,
+          adminRocoId: cuenta.adminRocoId,
+          fotoPerfil: ''
+        });
+      } catch (error) {
+        console.error(error);
       }
-      setDone(true);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
     }
+
+    await signOut(auth);
+    setStatus('¡Proceso finalizado con éxito! Todos los administradores han sido creados.');
   };
 
   return (
-    <Container style={{ paddingTop: '100px', textAlign: 'center' }}>
-      <h1>Poblar Estructura de Competencia</h1>
-      <p style={{ marginBottom: '24px', color: '#64748b' }}>
-        Genera simultáneamente los sectores y sus respectivas vías vinculadas en Firestore.
+    <Container style={{ padding: '120px 20px', textAlign: 'center', maxWidth: '600px' }}>
+      <h1 style={{ fontSize: '26px', fontWeight: '800', marginBottom: '16px', color: '#0f172a' }}>
+        Inyector Automático de Administradores
+      </h1>
+      <p style={{ color: '#64748b', marginBottom: '32px', lineHeight: '1.6' }}>
+        Al pulsar el botón se darán de alta de forma secuencial las 19 cuentas administrativas en la plataforma.
       </p>
-      <Button onClick={handleSeedTodo} disabled={loading || done}>
-        {loading ? 'Insertando estructura...' : done ? '¡Datos creados!' : 'Generar Sectores y Vías'}
+
+      <Button variant="primary" onClick={procesarInyeccion} style={{ width: '100%', marginBottom: '24px' }}>
+        Ejecutar Inyección de Roles
       </Button>
+
+      <div style={{ padding: '16px', background: '#f1f5f9', borderRadius: '12px', fontWeight: '600', color: '#334155' }}>
+        {status}
+      </div>
     </Container>
   );
 }

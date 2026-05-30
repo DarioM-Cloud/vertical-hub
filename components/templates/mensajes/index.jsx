@@ -241,6 +241,7 @@ export default function MensajesTemplate({ chats = [], activeChat, mensajes = []
   };
 
   return (
+    <div className={styles.pageWrapper}>
     <Container className={styles.container}>
       <div className={styles.messagingLayout}>
         <div className={styles.sidebar}>
@@ -390,5 +391,6 @@ export default function MensajesTemplate({ chats = [], activeChat, mensajes = []
         </div>
       </div>
     </Container>
+    </div>
   );
 }

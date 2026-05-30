@@ -22,6 +22,7 @@ export default function RegisterTemplate({ onRegister, error }) {
   };
 
   return (
+    <div className={styles.pageWrapper}>
     <Container className={styles.container}>
       <Section className={styles.formSection}>
         <div className={styles.card}>
@@ -84,5 +85,6 @@ export default function RegisterTemplate({ onRegister, error }) {
         </div>
       </Section>
     </Container>
+    </div>
   );
 }
