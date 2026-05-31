@@ -1,45 +1,65 @@
-.sectionBlock {
-  margin-bottom: 40px;
-}
-
-.sectionHeader {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #e2e8f0;
-
-  h2 {
-    font-size: 20px;
-    font-weight: 800;
-    color: #0f172a;
-    margin: 0px;
-  }
-}
-
-.warningIcon {
-  color: #3b82f6;
-}
-
-.avisosList {
+.list {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-.avisoCard {
+.card {
   display: flex;
   gap: 16px;
-  padding: 20px;
-  border-radius: 16px;
+  padding: 16px;
+  border-radius: 12px;
   border: 1px solid transparent;
-  background: #ffffff;
+
+  &.infoCard {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+    
+    .iconWrapper {
+      background: #dbeafe;
+      color: #2563eb;
+    }
+
+    .badge {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+  }
+
+  &.eventCard {
+    background: #fefce8;
+    border-color: #fef08a;
+
+    .iconWrapper {
+      background: #fef9c3;
+      color: #d97706;
+    }
+
+    .badge {
+      background: #fef9c3;
+      color: #b45309;
+    }
+  }
+
+  &.alertCard {
+    background: #fef2f2;
+    border-color: #fecaca;
+
+    .iconWrapper {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .badge {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+  }
 }
 
-.avisoIconWrapper {
-  width: 40px;
-  height: 40px;
+.iconWrapper {
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -47,87 +67,53 @@
   flex-shrink: 0;
 }
 
-.avisoContent {
+.contentWrapper {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 8px;
-
-  p {
-    margin: 0px;
-    font-size: 15px;
-    line-height: 1.5;
-    color: #334155;
-  }
 }
 
-.avisoTop {
+.header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
 }
 
-.avisoBadge {
+.badge {
+  padding: 4px 10px;
+  border-radius: 12px;
   font-size: 12px;
   font-weight: 800;
-  padding: 4px 10px;
-  border-radius: 8px;
+  display: inline-block;
 }
 
-.avisoDate {
-  font-size: 13px;
-  font-weight: 600;
+.date {
+  font-size: 12px;
   color: #64748b;
+  margin-top: 2px;
 }
 
-.aviso_info {
-  border-color: #bfdbfe;
-  background: #eff6ff;
-
-  .avisoIconWrapper {
-    background: #dbeafe;
-    color: #2563eb;
-  }
-  .avisoBadge {
-    background: #dbeafe;
-    color: #1d4ed8;
-  }
+.title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
 }
 
-.aviso_warning {
-  border-color: #fde68a;
-  background: #fffbeb;
-
-  .avisoIconWrapper {
-    background: #fef3c7;
-    color: #d97706;
-  }
-  .avisoBadge {
-    background: #fef3c7;
-    color: #b45309;
-  }
-}
-
-.aviso_alert {
-  border-color: #fecaca;
-  background: #fef2f2;
-
-  .avisoIconWrapper {
-    background: #fee2e2;
-    color: #dc2626;
-  }
-  .avisoBadge {
-    background: #fee2e2;
-    color: #b91c1c;
-  }
-}
-
-.emptyAvisos {
-  background: #f8fafc;
-  padding: 20px;
-  border-radius: 12px;
-  color: #64748b;
+.text {
+  margin: 0;
   font-size: 14px;
+  color: #334155;
+  line-height: 1.5;
+}
+
+.empty {
   text-align: center;
+  padding: 32px;
+  color: #94a3b8;
+  font-size: 14px;
+  background: #f8fafc;
+  border-radius: 12px;
   border: 1px dashed #cbd5e1;
 }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { auth, db } from '@/lib/firebase';
-import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, onSnapshot } from 'firebase/firestore';
 
 export function useAuth() {
@@ -11,17 +11,23 @@ export function useAuth() {
     const unsubscribeAuth = onAuthStateChanged(auth, (authUser) => {
       if (authUser) {
         const userRef = doc(db, 'usuarios', authUser.uid);
-        const unsubscribeDoc = onSnapshot(userRef, (docSnap) => {
+        const unsubscribeDoc = onSnapshot(userRef, async (docSnap) => {
           if (docSnap.exists()) {
             const userData = docSnap.data();
-            setUser({ 
-              ...authUser, 
-              ...userData, 
-              uid: authUser.uid,
-              isSuperAdmin: userData.rol === 'superadmin',
-              isRocoAdmin: userData.rol === 'rocoadmin',
-              adminRocoId: userData.adminRocoId || null
-            });
+            
+            if (userData.bloqueado) {
+              await signOut(auth);
+              setUser(null);
+            } else {
+              setUser({ 
+                ...authUser, 
+                ...userData, 
+                uid: authUser.uid,
+                isSuperAdmin: userData.rol === 'superadmin',
+                isRocoAdmin: userData.rol === 'rocoadmin',
+                adminRocoId: userData.adminRocoId || null
+              });
+            }
           } else {
             setUser({
               ...authUser,

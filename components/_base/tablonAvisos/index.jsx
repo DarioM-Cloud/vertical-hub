@@ -1,37 +1,55 @@
-import { ShieldAlert, AlertTriangle, Info } from 'lucide-react';
+'use client';
+
+import { Info, AlertTriangle, Calendar } from 'lucide-react';
 import styles from './tablonAvisos.module.scss';
 
-export default function TablonAvisos({ avisos }) {
+export default function TablonAvisos({ avisos = [] }) {
+  if (!avisos || avisos.length === 0) {
+    return <div className={styles.empty}>No hay avisos en este momento.</div>;
+  }
+
+  const formatFecha = (fecha) => {
+    if (!fecha) return '';
+    if (fecha.toDate) return fecha.toDate().toLocaleDateString();
+    if (fecha.seconds) return new Date(fecha.seconds * 1000).toLocaleDateString();
+    return new Date(fecha).toLocaleDateString();
+  };
+
   return (
-    <div className={styles.sectionBlock}>
-      <div className={styles.sectionHeader}>
-        <ShieldAlert size={20} className={styles.warningIcon} />
-        <h2>Tablón Oficial</h2>
-      </div>
-      <div className={styles.avisosList}>
-        {avisos.length === 0 ? (
-          <div className={styles.emptyAvisos}>No hay avisos recientes de la administración.</div>
-        ) : (
-          avisos.map(aviso => (
-            <div key={aviso.id} className={`${styles.avisoCard} ${styles[`aviso_${aviso.tipo || 'info'}`]}`}>
-              <div className={styles.avisoIconWrapper}>
-                {aviso.tipo === 'alert' || aviso.tipo === 'warning' ? <AlertTriangle size={18} /> : <Info size={18} />}
-              </div>
-              <div className={styles.avisoContent}>
-                <div className={styles.avisoTop}>
-                  <span className={styles.avisoBadge}>
-                    {aviso.tipo === 'alert' ? 'Importante' : aviso.tipo === 'warning' ? 'Aviso' : 'Información'}
-                  </span>
-                  <span className={styles.avisoDate}>
-                    {aviso.fecha?.toDate ? new Intl.DateTimeFormat('es-ES').format(aviso.fecha.toDate()) : 'Reciente'}
-                  </span>
-                </div>
-                <p>{aviso.mensaje}</p>
-              </div>
+    <div className={styles.list}>
+      {avisos.map((aviso) => {
+        const tipo = aviso.tipo || 'Informativo';
+        
+        let Icon = Info;
+        let badgeText = 'Información';
+        let cardClass = styles.infoCard;
+
+        if (tipo === 'Alerta') {
+          Icon = AlertTriangle;
+          badgeText = 'Alerta';
+          cardClass = styles.alertCard;
+        } else if (tipo === 'Evento') {
+          Icon = Calendar;
+          badgeText = 'Evento';
+          cardClass = styles.eventCard;
+        }
+
+        return (
+          <div key={aviso.id} className={`${styles.card} ${cardClass}`}>
+            <div className={styles.iconWrapper}>
+              <Icon size={18} />
             </div>
-          ))
-        )}
-      </div>
+            <div className={styles.contentWrapper}>
+              <div className={styles.header}>
+                <span className={styles.badge}>{badgeText}</span>
+                <span className={styles.date}>{formatFecha(aviso.fecha)}</span>
+              </div>
+              {aviso.titulo && <h4 className={styles.title}>{aviso.titulo}</h4>}
+              <p className={styles.text}>{aviso.contenido || aviso.texto}</p>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
