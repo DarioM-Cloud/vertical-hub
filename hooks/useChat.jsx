@@ -11,7 +11,8 @@ import {
   getDoc,
   setDoc,
   updateDoc,
-  where
+  where,
+  increment
 } from 'firebase/firestore';
 
 export function useChat(currentUserUid, targetUserUid) {
@@ -35,7 +36,11 @@ export function useChat(currentUserUid, targetUserUid) {
         await setDoc(chatRef, {
           participantes: ids,
           ultimoMensaje: '',
-          fechaActualizacion: serverTimestamp()
+          fechaActualizacion: serverTimestamp(),
+          noLeidos: {
+            [currentUserUid]: 0,
+            [targetUserUid]: 0
+          }
         });
       }
 
@@ -74,6 +79,19 @@ export function useChat(currentUserUid, targetUserUid) {
     return () => unsubscribe();
   }, [chatId]);
 
+  useEffect(() => {
+    if (!chatId || !currentUserUid) return;
+    const marcarComoLeido = async () => {
+      try {
+        const chatRef = doc(db, 'chats', chatId);
+        await updateDoc(chatRef, {
+          [`noLeidos.${currentUserUid}`]: 0
+        });
+      } catch (error) {}
+    };
+    marcarComoLeido();
+  }, [chatId, currentUserUid, mensajes]);
+
   const enviarMensaje = async (texto) => {
     if (!texto.trim() || !chatId) return;
 
@@ -89,7 +107,8 @@ export function useChat(currentUserUid, targetUserUid) {
 
     await updateDoc(chatRef, {
       ultimoMensaje: texto,
-      fechaActualizacion: serverTimestamp()
+      fechaActualizacion: serverTimestamp(),
+      [`noLeidos.${targetUserUid}`]: increment(1)
     });
   };
 

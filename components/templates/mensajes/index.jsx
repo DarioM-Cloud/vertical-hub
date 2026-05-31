@@ -7,9 +7,10 @@ import { Send, User, MessageSquare, ExternalLink, MessageCircle, MoreHorizontal,
 import Container from '@/components/_base/layout/container';
 import { doc, getDoc, updateDoc, deleteDoc, collection, getDocs, writeBatch } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { useGlobalCounters } from '@/hooks/useGlobalCounters';
 import styles from './mensajes.module.scss';
 
-function ChatItemRow({ chat, activeChat, router, onClearChat, onDeleteChat }) {
+function ChatItemRow({ chat, activeChat, router, onClearChat, onDeleteChat, unreadCount }) {
   const [foto, setFoto] = useState(chat.fotoPerfil || chat.userAvatar);
   const [showMenu, setShowMenu] = useState(false);
   const estaSeleccionado = activeChat && (activeChat.id === chat.id || activeChat.uid === chat.otherUserId);
@@ -54,8 +55,19 @@ function ChatItemRow({ chat, activeChat, router, onClearChat, onDeleteChat }) {
           )}
         </div>
         <div className={styles.chatInfo} style={{ flex: 1, minWidth: 0 }}>
-          <span className={styles.chatName} style={{ display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{chat.nombre || chat.userName}</span>
-          <p className={styles.chatLastMessage} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{chat.ultimoMensaje || 'Sin mensajes'}</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span className={styles.chatName} style={{ display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: unreadCount > 0 ? '800' : 'normal' }}>
+              {chat.nombre || chat.userName}
+            </span>
+            {unreadCount > 0 && (
+              <span style={{ background: '#3b82f6', color: 'white', fontSize: '10px', fontWeight: 'bold', padding: '2px 6px', borderRadius: '10px' }}>
+                {unreadCount}
+              </span>
+            )}
+          </div>
+          <p className={styles.chatLastMessage} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: unreadCount > 0 ? '700' : 'normal', color: unreadCount > 0 ? '#3b82f6' : '#64748b' }}>
+            {chat.ultimoMensaje || 'Sin mensajes'}
+          </p>
         </div>
       </div>
 
@@ -159,6 +171,11 @@ export default function MensajesTemplate({ chats = [], activeChat, mensajes = []
   const [activeChatPhoto, setActiveChatPhoto] = useState(null);
   const [showMenu, setShowMenu] = useState(false);
   const messagesEndRef = useRef(null);
+  
+  const { unreadPerChat } = useGlobalCounters(currentUser?.uid);
+
+  const filteredChats = chats.filter(c => c.rol !== 'superadmin' && c.rol !== 'rocoadmin' && c.otherUserRole !== 'superadmin' && c.otherUserRole !== 'rocoadmin');
+  const filteredRandomUsers = randomUsers.filter(u => u.rol !== 'superadmin' && u.rol !== 'rocoadmin');
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -250,11 +267,11 @@ export default function MensajesTemplate({ chats = [], activeChat, mensajes = []
           </div>
           
           <div className={styles.scrollArea}>
-              {chats.length > 0 && (
+              {filteredChats.length > 0 && (
                 <>
                   <div className={styles.sectionTitle}>Tus Conversaciones</div>
                   <div className={styles.chatsList}>
-                    {chats.map(chat => (
+                    {filteredChats.map(chat => (
                       <ChatItemRow 
                         key={chat.chatId || chat.id} 
                         chat={chat} 
@@ -262,17 +279,18 @@ export default function MensajesTemplate({ chats = [], activeChat, mensajes = []
                         router={router} 
                         onClearChat={internalClearChat}
                         onDeleteChat={internalDeleteChat}
+                        unreadCount={unreadPerChat[chat.chatId || chat.id] || 0}
                       />
                     ))}
                   </div>
                 </>
               )}
 
-              {randomUsers && randomUsers.length > 0 && (
+              {filteredRandomUsers && filteredRandomUsers.length > 0 && (
                 <>
                   <div className={styles.sectionTitle}>Descubrir Atletas</div>
                   <div className={styles.chatsList}>
-                    {randomUsers.map(u => (
+                    {filteredRandomUsers.map(u => (
                       <SuggestedItemRow key={u.id || u.uid} u={u} router={router} />
                     ))}
                   </div>

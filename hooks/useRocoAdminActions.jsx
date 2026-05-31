@@ -4,13 +4,14 @@ import { db } from '@/lib/firebase';
 import { addDoc, updateDoc, deleteDoc, doc, collection, serverTimestamp } from 'firebase/firestore';
 
 export function useRocoAdminActions(rocoId) {
-  const updateOccupancy = async (newCount) => {
-    if (!rocoId) return;
-    try {
-      await updateDoc(doc(db, 'rocodromos', rocoId), { ocupacionActual: newCount });
-    } catch (error) {}
-  };
-
+  const updateOccupancy = async (nuevoAforo) => {
+  if (!rocoId) return;
+  try {
+    await updateDoc(doc(db, 'rocodromos', rocoId), {
+      aforoActual: nuevoAforo
+    });
+  } catch (error) {}
+};
   const addAnnouncement = async (data) => {
     if (!rocoId) return;
     try {

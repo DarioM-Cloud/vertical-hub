@@ -1,0 +1,108 @@
+.container {
+  padding: 40px 20px;
+  max-width: 800px;
+  margin: 0 auto;
+  min-height: 80vh;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 24px;
+}
+
+.searchBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 16px 20px;
+  border-radius: 16px;
+  margin-bottom: 32px;
+  box-shadow: 0px 4px 20px rgba(15, 23, 42, 0.02);
+
+  .searchIcon {
+    color: #64748b;
+  }
+
+  .searchInput {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 15px;
+    color: #0f172a;
+
+    &::placeholder {
+      color: #94a3b8;
+    }
+  }
+}
+
+.usersGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.userCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: #f1f5f9;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+}
+
+.name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.email {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.actionBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 10px;
+  padding: 8px 16px;
+  font-size: 13px;
+}
+
+.empty {
+  text-align: center;
+  color: #94a3b8;
+  padding: 40px;
+  font-size: 15px;
+}

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import SpeedDial from '@mui/material/SpeedDial';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
-import { ShieldAlert, Settings, X } from 'lucide-react';
+import { ShieldAlert, Settings, X, Building } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 
 export default function AdminSpeedDial() {
@@ -20,16 +20,29 @@ export default function AdminSpeedDial() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const actions = [
-    { 
+  const actions = [];
+
+  if (user.isSuperAdmin) {
+    actions.push({
       icon: <ShieldAlert size={20} color="#0f172a" />, 
-      name: 'Panel de Administración',
+      name: 'Panel Global (SuperAdmin)',
       onClick: () => {
         handleClose();
         router.push('/admin');
       }
-    }
-  ];
+    });
+  }
+
+  if (user.isRocoAdmin) {
+    actions.push({
+      icon: <Building size={20} color="#0f172a" />, 
+      name: 'Gestionar mi Rocódromo',
+      onClick: () => {
+        handleClose();
+        router.push('/admin-roco');
+      }
+    });
+  }
 
   return (
     <SpeedDial
