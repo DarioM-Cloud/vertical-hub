@@ -21,9 +21,7 @@ function TicketAvatar({ ticket, index, router }) {
           const data = userSnap.data();
           setFoto(data.fotoPerfil || data.photoURL || ticket.autorFoto);
         }
-      } catch (error) {
-        console.error(error);
-      }
+      } catch (error) {}
     };
     fetchPhoto();
   }, [ticket.autorId, ticket.autorFoto]);
@@ -48,11 +46,15 @@ function TicketAvatar({ ticket, index, router }) {
 
 export default function GymCard({ data, activeTickets = [] }) {
   const router = useRouter();
-  const occupancyPercentage = data.aforoMaximo > 0 ? Math.round((data.aforoActual / data.aforoMaximo) * 100) : 0;
   
-  let occupancyColor = '#10b981';
-  if (occupancyPercentage > 50) occupancyColor = '#f59e0b';
-  if (occupancyPercentage > 85) occupancyColor = '#ef4444';
+  const aforoActual = data.aforoActual || 0;
+  const aforoMaximo = data.aforoMaximo || 100;
+  const occupancyPercentage = aforoMaximo > 0 ? Math.round((aforoActual / aforoMaximo) * 100) : 0;
+  
+  let occupancyColor = '#22c55e'; 
+  if (occupancyPercentage >= 40) occupancyColor = '#eab308'; 
+  if (occupancyPercentage >= 75) occupancyColor = '#f97316'; 
+  if (occupancyPercentage >= 90) occupancyColor = '#ef4444'; 
 
   const backgroundImageUrl = data.imagenUrl || 'https://images.unsplash.com/photo-1522163182402-834f871fd851?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
 
@@ -78,13 +80,13 @@ export default function GymCard({ data, activeTickets = [] }) {
               <span>Aforo en tiempo real:</span>
             </div>
             <span className={styles.occupancyText} style={{ color: occupancyColor }}>
-              {data.aforoActual} / {data.aforoMaximo}
+              {aforoActual} / {aforoMaximo}
             </span>
           </div>
           <div className={styles.progressBar}>
             <div 
               className={styles.progressFill} 
-              style={{ width: `${occupancyPercentage}%`, backgroundColor: occupancyColor }}
+              style={{ width: `${Math.min(100, occupancyPercentage)}%`, backgroundColor: occupancyColor }}
             ></div>
           </div>
         </div>

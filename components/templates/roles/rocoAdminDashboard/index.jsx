@@ -4,34 +4,34 @@ import { useState } from 'react';
 import { Plus, Minus, Trash2, Megaphone, Activity, EyeOff, Save, Users, Layers } from 'lucide-react';
 import Container from '@/components/_base/layout/container';
 import Button from '@/components/_base/ui/button';
+import { useAvisos } from '@/hooks/useAvisos';
 import styles from './rocoAdminDashboard.module.scss';
 
 export default function RocoAdminDashboardTemplate({ 
   currentUserProfile,
   gymData, 
-  announcements = [], 
   routes = [], 
   localPosts = [], 
   onUpdateOccupancy, 
-  onAddAnnouncement, 
-  onDeleteAnnouncement,
   onUpdateRoute,
   onRemovePostFromGym 
 }) {
+  const { avisos, addAviso, deleteAviso } = useAvisos(gymData?.id);
+  
   const [activeTab, setActiveTab] = useState('aforo');
-  const [nuevoAnuncio, setNuevoAnuncio] = useState({ titulo: '', contenido: '' });
+  const [nuevoAnuncio, setNuevoAnuncio] = useState({ titulo: '', contenido: '', tipo: 'Informativo' });
   const [editingRouteId, setEditingRouteId] = useState(null);
   const [routeForm, setRouteForm] = useState({ nombre: '', grado: '', estado: '' });
 
   const gymName = gymData?.nombre || 'Panel de Administración';
-  const currentOccupancy = gymData?.ocupacionActual || 0;
+  const currentOccupancy = gymData?.aforoActual || 0;
   const maxCapacity = gymData?.aforoMaximo || 100;
 
   const handleAnnouncementSubmit = (e) => {
     e.preventDefault();
     if (!nuevoAnuncio.titulo || !nuevoAnuncio.contenido) return;
-    onAddAnnouncement(nuevoAnuncio);
-    setNuevoAnuncio({ titulo: '', contenido: '' });
+    addAviso(nuevoAnuncio);
+    setNuevoAnuncio({ titulo: '', contenido: '', tipo: 'Informativo' });
   };
 
   const startEditingRoute = (via) => {
@@ -42,6 +42,13 @@ export default function RocoAdminDashboardTemplate({
   const handleSaveRoute = (id) => {
     onUpdateRoute(id, routeForm);
     setEditingRouteId(null);
+  };
+
+  const getStatusClass = (estado) => {
+    const est = estado?.toLowerCase();
+    if (est === 'equipando' || est === 'proyecto' || est === 'en equipamiento') return 'equipamiento';
+    if (est === 'desequipada') return 'desequipada';
+    return 'abierta';
   };
 
   return (
@@ -105,12 +112,24 @@ export default function RocoAdminDashboardTemplate({
                   <h2 className={styles.cardTitle}>Publicar en el Tablón</h2>
                   <form onSubmit={handleAnnouncementSubmit} className={styles.form}>
                     <div className={styles.inputGroup}>
+                      <label>Tipo de Anuncio</label>
+                      <select 
+                        value={nuevoAnuncio.tipo}
+                        onChange={(e) => setNuevoAnuncio({ ...nuevoAnuncio, tipo: e.target.value })}
+                        className={styles.selectInput}
+                      >
+                        <option value="Informativo">Informativo general</option>
+                        <option value="Evento">Evento / Competición</option>
+                        <option value="Alerta">Alerta / Mantenimiento</option>
+                      </select>
+                    </div>
+                    <div className={styles.inputGroup}>
                       <label>Título del Anuncio</label>
                       <input
                         type="text"
                         value={nuevoAnuncio.titulo}
                         onChange={(e) => setNuevoAnuncio({ ...nuevoAnuncio, titulo: e.target.value })}
-                        placeholder="Ej: Mañana cerramos por mantenimiento técnico"
+                        placeholder="Ej: Nuevos bloques en la zona de cueva"
                       />
                     </div>
                     <div className={styles.inputGroup}>
@@ -131,16 +150,21 @@ export default function RocoAdminDashboardTemplate({
                 <div className={styles.card}>
                   <h2 className={styles.cardTitle}>Anuncios Activos</h2>
                   <div className={styles.listArea}>
-                    {announcements.length === 0 ? (
+                    {avisos.length === 0 ? (
                       <p className={styles.emptyText}>No hay anuncios publicados en este centro.</p>
                     ) : (
-                      announcements.map((item) => (
+                      avisos.map((item) => (
                         <div key={item.id} className={styles.listItem}>
                           <div style={{ flex: 1, paddingRight: '12px' }}>
-                            <span className={styles.itemMainText}>{item.titulo}</span>
-                            <p className={styles.itemSubText} style={{ whiteSpace: 'normal', marginTop: '4px' }}>{item.contenido}</p>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <span className={styles.itemMainText}>{item.titulo}</span>
+                              <span className={`${styles.typeBadge} ${styles[item.tipo?.toLowerCase() || 'informativo']}`}>
+                                {item.tipo || 'Informativo'}
+                              </span>
+                            </div>
+                            <p className={styles.itemSubText} style={{ whiteSpace: 'normal', marginTop: '6px' }}>{item.contenido}</p>
                           </div>
-                          <button className={styles.deleteBtn} onClick={() => onDeleteAnnouncement(item.id)}>
+                          <button className={styles.deleteBtn} onClick={() => deleteAviso(item.id)}>
                             <Trash2 size={16} />
                           </button>
                         </div>
@@ -202,12 +226,13 @@ export default function RocoAdminDashboardTemplate({
                                 className={styles.tableSelect}
                               >
                                 <option value="Abierta">Abierta</option>
+                                <option value="Equipando">Equipando</option>
                                 <option value="Proyecto">Proyecto</option>
                                 <option value="Desequipada">Desequipada</option>
                               </select>
                             ) : (
-                              <span className={`${styles.statusBadge} ${styles[via.estado?.toLowerCase()]}`}>
-                                {via.estado}
+                              <span className={`${styles.statusBadge} ${styles[getStatusClass(via.estado)]}`}>
+                                {via.estado || 'Abierta'}
                               </span>
                             )}
                           </td>

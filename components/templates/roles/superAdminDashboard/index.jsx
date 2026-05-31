@@ -2,9 +2,10 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Plus, Building2, Trash2, ShieldAlert } from 'lucide-react';
+import { Plus, Building2, Trash2, ShieldAlert, AlertTriangle } from 'lucide-react';
 import Container from '@/components/_base/layout/container';
 import Button from '@/components/_base/ui/button';
+import Modal from '@/components/_base/ui/modal';
 import styles from './superAdminDashboard.module.scss';
 
 export default function SuperAdminDashboardTemplate({ 
@@ -13,12 +14,29 @@ export default function SuperAdminDashboardTemplate({
   onDeleteRocodromo 
 }) {
   const [nuevoRoco, setNuevoRoco] = useState({ nombre: '', ubicacion: '', aforoMaximo: 100 });
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedRoco, setSelectedRoco] = useState(null);
+  const [confirmName, setConfirmName] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!nuevoRoco.nombre || !nuevoRoco.ubicacion) return;
     onAddRocodromo(nuevoRoco);
     setNuevoRoco({ nombre: '', ubicacion: '', aforoMaximo: 100 });
+  };
+
+  const openDeleteVerification = (roco) => {
+    setSelectedRoco(roco);
+    setConfirmName('');
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (selectedRoco && confirmName === selectedRoco.nombre) {
+      onDeleteRocodromo(selectedRoco.id);
+      setIsDeleteModalOpen(false);
+      setSelectedRoco(null);
+    }
   };
 
   return (
@@ -93,7 +111,7 @@ export default function SuperAdminDashboardTemplate({
                       <span className={styles.itemMainText}>{roco.nombre}</span>
                       <p className={styles.itemSubText}>{roco.ubicacion} • Aforo máx: {roco.aforoMaximo}</p>
                     </div>
-                    <button className={styles.deleteBtn} onClick={() => onDeleteRocodromo(roco.id)}>
+                    <button className={styles.deleteBtn} onClick={() => openDeleteVerification(roco)}>
                       <Trash2 size={16} />
                     </button>
                   </div>
@@ -103,6 +121,37 @@ export default function SuperAdminDashboardTemplate({
           </div>
         </div>
       </Container>
+
+      <Modal isOpen={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)} title="Verificación Requerida">
+        <div className={styles.verificationForm} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: '#fef2f2', padding: '12px', borderRadius: '8px', border: '1px solid #fca5a5' }}>
+            <AlertTriangle size={24} color="#dc2626" />
+            <p style={{ fontSize: '13px', color: '#991b1b', margin: 0, fontWeight: 600 }}>
+              Esta acción es irreversible y eliminará el centro junto con toda su configuración interna.
+            </p>
+          </div>
+          <p style={{ fontSize: '14px', color: '#334155', margin: 0 }}>
+            Para confirmar la eliminación, escribe el nombre exacto del rocódromo: <strong style={{ color: '#0f172a' }}>{selectedRoco?.nombre}</strong>
+          </p>
+          <div className={styles.inputGroup}>
+            <input 
+              type="text" 
+              value={confirmName} 
+              onChange={(e) => setConfirmName(e.target.value)} 
+              placeholder="Escribe el nombre aquí..."
+              style={{ padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1', width: '100%', boxSizing: 'border-box' }}
+            />
+          </div>
+          <Button 
+            variant="primary" 
+            onClick={handleConfirmDelete} 
+            disabled={confirmName !== selectedRoco?.nombre}
+            style={{ width: '100%', background: confirmName === selectedRoco?.nombre ? '#dc2626' : '#cbd5e1' }}
+          >
+            Eliminar Definitivamente
+          </Button>
+        </div>
+      </Modal>
     </div>
   );
 }

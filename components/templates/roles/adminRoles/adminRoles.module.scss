@@ -1,0 +1,260 @@
+.pageWrapper {
+  min-height: 100vh;
+  width: 100%;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(248, 250, 252, 0.85)), url('https://images.unsplash.com/photo-1522163182402-834f871fd851?q=80&w=1920&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  padding: 100px 20px 60px 20px;
+  box-sizing: border-box;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0px auto;
+  padding: 0px !important;
+  background-color: transparent !important;
+}
+
+.header {
+  margin-bottom: 32px;
+  background: #ffffff;
+  padding: 24px 32px;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0px 4px 20px rgba(15, 23, 42, 0.02);
+
+  .title {
+    margin: 0px;
+    font-size: 26px;
+    font-weight: 900;
+    color: #0f172a;
+    letter-spacing: -0.5px;
+  }
+
+  .subtitle {
+    margin: 6px 0px 0px 0px;
+    font-size: 14px;
+    color: #64748b;
+  }
+}
+
+.layoutGrid {
+  display: grid;
+  grid-template-columns: 1fr 450px;
+  gap: 24px;
+
+  @media (max-width: 992px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.listCard, .editCard {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0px 10px 30px rgba(15, 23, 42, 0.04);
+  display: flex;
+  flex-direction: column;
+}
+
+.searchBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  color: #64748b;
+
+  input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    outline: none;
+    font-family: inherit;
+    color: #0f172a;
+  }
+}
+
+.userList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 500px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.userItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+  }
+}
+
+.userItemActive {
+  background: #eff6ff;
+  border-color: #3b82f6;
+
+  &:hover {
+    background: #eff6ff;
+    border-color: #3b82f6;
+  }
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+}
+
+.userName {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.userEmail {
+  font-size: 12px;
+  color: #64748b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.roleBadge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.user {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.rocoadmin {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.superadmin {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.cardTitle {
+  margin: 0px 0px 16px 0px;
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.selectedMeta {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  color: #334155;
+
+  p {
+    margin: 0px;
+    
+    &:first-child {
+      margin-bottom: 6px;
+    }
+  }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #475569;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  select {
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    font-size: 14px;
+    outline: none;
+    font-family: inherit;
+    color: #0f172a;
+    transition: all 0.2s;
+
+    &:focus {
+      background: #ffffff;
+      border-color: #3b82f6;
+    }
+  }
+}
+
+.placeholderCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  height: 100%;
+  min-height: 300px;
+  color: #94a3b8;
+  text-align: center;
+  padding: 20px;
+
+  p {
+    font-size: 14px;
+    margin: 0px;
+    line-height: 1.5;
+  }
+}
+
+.emptyText {
+  text-align: center;
+  color: #94a3b8;
+  font-size: 14px;
+  font-style: italic;
+  margin: 20px 0px;
+}

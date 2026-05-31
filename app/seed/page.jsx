@@ -3,12 +3,12 @@
 import { useState } from 'react';
 import { auth, db } from '@/lib/firebase';
 import { createUserWithEmailAndPassword, signOut } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, collection, getDocs, updateDoc, deleteField } from 'firebase/firestore';
 import Container from '@/components/_base/layout/container';
 import Button from '@/components/_base/ui/button';
 
 export default function SeedPage() {
-  const [status, setStatus] = useState('Esperando para iniciar la inyección...');
+  const [status, setStatus] = useState('Esperando acción...');
 
   const listaAdmins = [
     { email: 'superadmin@verticalhub.com', pass: 'superAdmin', rol: 'superadmin', nombre: 'Super Admin', adminRocoId: null },
@@ -46,26 +46,53 @@ export default function SeedPage() {
           fotoPerfil: ''
         });
       } catch (error) {
-        console.error(error);
+        if (error.code !== 'auth/email-already-in-use') {
+          console.error(error);
+        }
       }
     }
 
     await signOut(auth);
-    setStatus('¡Proceso finalizado con éxito! Todos los administradores han sido creados.');
+    setStatus('¡Proceso finalizado! Todos los administradores han sido creados.');
+  };
+
+  const resetearAforos = async () => {
+    setStatus('Limpiando base de datos: Borrando ocupacionActual y seteando aforoActual a 0...');
+    try {
+      const rocoSnap = await getDocs(collection(db, 'rocodromos'));
+      const actualizaciones = rocoSnap.docs.map(documento => 
+        updateDoc(doc(db, 'rocodromos', documento.id), {
+          aforoActual: 0,
+          ocupacionActual: deleteField()
+        })
+      );
+      
+      await Promise.all(actualizaciones);
+      setStatus('¡Datos saneados y aforos reseteados a 0 correctamente!');
+    } catch (error) {
+      setStatus('Error al actualizar los aforos.');
+      console.error(error);
+    }
   };
 
   return (
     <Container style={{ padding: '120px 20px', textAlign: 'center', maxWidth: '600px' }}>
       <h1 style={{ fontSize: '26px', fontWeight: '800', marginBottom: '16px', color: '#0f172a' }}>
-        Inyector Automático de Administradores
+        Panel de Inyección y Reseteo (Seed)
       </h1>
       <p style={{ color: '#64748b', marginBottom: '32px', lineHeight: '1.6' }}>
-        Al pulsar el botón se darán de alta de forma secuencial las 19 cuentas administrativas en la plataforma.
+        Herramientas de desarrollo para sincronizar la base de datos de Vertical Hub.
       </p>
 
-      <Button variant="primary" onClick={procesarInyeccion} style={{ width: '100%', marginBottom: '24px' }}>
-        Ejecutar Inyección de Roles
-      </Button>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '32px' }}>
+        <Button variant="primary" onClick={procesarInyeccion} style={{ width: '100%' }}>
+          Ejecutar Inyección de Cuentas Admin
+        </Button>
+
+        <Button variant="outline" onClick={resetearAforos} style={{ width: '100%', borderColor: '#ef4444', color: '#ef4444' }}>
+          Resetear Todos los Aforos a 0
+        </Button>
+      </div>
 
       <div style={{ padding: '16px', background: '#f1f5f9', borderRadius: '12px', fontWeight: '600', color: '#334155' }}>
         {status}

@@ -100,7 +100,7 @@
 .progressFill {
   height: 100%;
   border-radius: 6px;
-  transition: width 0.3s ease;
+  transition: width 0.3s ease, background-color 0.3s ease;
 }
 
 .details {
