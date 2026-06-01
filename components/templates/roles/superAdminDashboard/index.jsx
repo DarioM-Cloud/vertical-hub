@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, Trash2, MapPin, Search, Users, Image as ImageIcon, Shield, Lock, Unlock, Save } from 'lucide-react';
+import { Plus, Trash2, MapPin, Search, Users, Image as ImageIcon, ShieldAlert, Lock, Unlock, Save, X } from 'lucide-react';
 import Container from '@/components/_base/layout/container';
 import Button from '@/components/_base/ui/button';
 import styles from './superAdminDashboard.module.scss';
@@ -25,6 +25,10 @@ export default function SuperAdminDashboardTemplate({
   });
 
   const [editUrls, setEditUrls] = useState({});
+  
+  const [deleteModal, setDeleteModal] = useState({ isOpen: false, roco: null });
+  const [deleteInput, setDeleteInput] = useState('');
+  const [deleteError, setDeleteError] = useState('');
 
   const handleAddSubmit = (e) => {
     e.preventDefault();
@@ -42,6 +46,22 @@ export default function SuperAdminDashboardTemplate({
     if (nuevaUrl !== undefined) {
       onUpdatePhoto(foto.coleccion, foto.id, foto.campo, nuevaUrl);
     }
+  };
+
+  const confirmDelete = () => {
+    if (deleteInput === deleteModal.roco.nombre) {
+      onDeleteRocodromo(deleteModal.roco.id);
+      setDeleteModal({ isOpen: false, roco: null });
+      setDeleteInput('');
+    } else {
+      setDeleteError('El nombre introducido no coincide. Inténtalo de nuevo.');
+    }
+  };
+
+  const closeDeleteModal = () => {
+    setDeleteModal({ isOpen: false, roco: null });
+    setDeleteInput('');
+    setDeleteError('');
   };
 
   const rocosFiltrados = rocodromos.filter(r => 
@@ -131,7 +151,14 @@ export default function SuperAdminDashboardTemplate({
                           <span className={styles.itemName}>{roco.nombre}</span>
                           <span className={styles.itemSub}>{roco.ubicacion} • Aforo Max: {roco.aforoMaximo}</span>
                         </div>
-                        <button className={styles.deleteBtn} onClick={() => onDeleteRocodromo(roco.id)}>
+                        <button 
+                          className={styles.deleteBtn} 
+                          onClick={() => {
+                            setDeleteModal({ isOpen: true, roco });
+                            setDeleteInput('');
+                            setDeleteError('');
+                          }}
+                        >
                           <Trash2 size={16} />
                         </button>
                       </div>
@@ -229,6 +256,64 @@ export default function SuperAdminDashboardTemplate({
           </div>
         </div>
       </Container>
+
+      {deleteModal.isOpen && deleteModal.roco && (
+        <div className={styles.modalOverlay} onClick={closeDeleteModal}>
+          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <div className={styles.iconWrapper}>
+                <ShieldAlert size={24} color="#ef4444" />
+              </div>
+              <button className={styles.closeModalBtn} onClick={closeDeleteModal}>
+                <X size={20} />
+              </button>
+            </div>
+            
+            <h3 className={styles.modalTitle}>Eliminar Rocódromo</h3>
+            
+            <p className={styles.modalText}>
+              Estás a punto de borrar <strong>{deleteModal.roco.nombre}</strong>. Esta acción es permanente y no se puede deshacer.
+            </p>
+            <p className={styles.modalText}>
+              Para confirmar, escribe el nombre exacto del centro:
+            </p>
+
+            <input 
+              type="text" 
+              value={deleteInput} 
+              onChange={(e) => {
+                setDeleteInput(e.target.value);
+                setDeleteError('');
+              }}
+              placeholder={deleteModal.roco.nombre}
+              className={`${styles.modalInput} ${deleteError ? styles.inputError : ''}`}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') confirmDelete();
+              }}
+            />
+
+            {deleteError && <span className={styles.errorText}>{deleteError}</span>}
+
+            <div className={styles.modalActions}>
+              <Button 
+                variant="outline" 
+                onClick={closeDeleteModal}
+                style={{ flex: 1 }}
+              >
+                Cancelar
+              </Button>
+              <Button 
+                variant="primary" 
+                onClick={confirmDelete}
+                style={{ flex: 1, background: '#ef4444', borderColor: '#ef4444', color: 'white' }}
+                disabled={deleteInput !== deleteModal.roco.nombre}
+              >
+                Sí, eliminar
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
