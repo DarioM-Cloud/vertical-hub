@@ -1,5 +1,7 @@
 'use client';
 
+import { doc, deleteDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 import { useState, useRef } from 'react';
 import { MessageSquare, Users, Image as ImageIcon, Video, X } from 'lucide-react';
 import Container from '@/components/_base/layout/container';
@@ -96,7 +98,7 @@ export default function ComunidadTemplate({
         <div className={styles.headerTop}>
           <h1>Comunidad</h1>
         </div>
-        
+                
         <div className={styles.actions}>
           <Button variant="primary" className={styles.actionBtn} onClick={() => setIsPostModalOpen(true)}>
             <MessageSquare size={18} />
